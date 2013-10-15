@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  event_id: 1
+  name: MyString
+  location: MyString
+  date_time: 2013-10-15 04:57:55
+  host: 1
+  ingredient_list: MyText
+  guest_list: MyText
+  status: false
+
+two:
+  event_id: 1
+  name: MyString
+  location: MyString
+  date_time: 2013-10-15 04:57:55
+  host: 1
+  ingredient_list: MyText
+  guest_list: MyText
+  status: false
