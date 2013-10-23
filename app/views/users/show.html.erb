@@ -15,15 +15,5 @@
   <%= @user.email %>
 </p>
 
-<p>
-  <strong>Refrigerator list:</strong>
-  <%= @user.refrigerator_list %>
-</p>
-
-<p>
-  <strong>Event list:</strong>
-  <%= @user.event_list %>
-</p>
-
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

@@ -11,38 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131015045755) do
+ActiveRecord::Schema.define(version: 20131023012754) do
 
   create_table "events", force: true do |t|
-    t.integer  "event_id",        null: false
-    t.string   "name",            null: false
-    t.string   "location",        null: false
-    t.datetime "date_time",       null: false
-    t.integer  "host",            null: false
+    t.integer  "event_id"
+    t.string   "name"
+    t.string   "location"
+    t.datetime "date_time"
+    t.string   "host"
     t.text     "ingredient_list"
     t.text     "guest_list"
-    t.boolean  "status"
+    t.integer  "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "ingredients", force: true do |t|
-    t.integer  "ingredient_id", null: false
-    t.string   "name",          null: false
-    t.float    "quantity",      null: false
-    t.string   "unit",          null: false
-    t.integer  "user_id",       null: false
-    t.boolean  "brought"
+    t.integer  "ingredient_id"
+    t.string   "name"
+    t.float    "quantity"
+    t.string   "unit"
+    t.string   "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|
-    t.integer  "user_id",           null: false
-    t.string   "name",              null: false
-    t.string   "email",             null: false
-    t.text     "refrigerator_list"
-    t.text     "event_list"
+    t.string   "user_id"
+    t.string   "name"
+    t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

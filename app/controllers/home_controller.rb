@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::Base
+class HomeController < ActionController::Base
  protect_from_forgery
   
    def index   
@@ -21,19 +21,7 @@ class ApplicationController < ActionController::Base
   		# acknowledge code and get access token from FB
 		  session[:access_token] = session[:oauth].get_access_token(params[:code])
 		end		
-
 		#re-direct to E2Gather home page 
-		
-		 
-		  
-		  # get @user instance from DB/ memory
-		  
-		  # user model ??
-		  
-		  # if the @user does not exist, creat one and save to DB
-		  
-		  
-		  
 		  
 		  
 		# auth established, now do a graph call:  
