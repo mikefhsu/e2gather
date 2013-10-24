@@ -5,13 +5,11 @@ one:
   name: MyString
   quantity: 1.5
   unit: MyString
-  user_id: 1
-  brought: false
+  user_id: MyString
 
 two:
   ingredient_id: 1
   name: MyString
   quantity: 1.5
   unit: MyString
-  user_id: 1
-  brought: false
+  user_id: MyString

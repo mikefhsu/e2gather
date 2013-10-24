@@ -18,7 +18,7 @@ class IngredientsControllerTest < ActionController::TestCase
 
   test "should create ingredient" do
     assert_difference('Ingredient.count') do
-      post :create, ingredient: { brought: @ingredient.brought, ingredient_id: @ingredient.ingredient_id, name: @ingredient.name, quantity: @ingredient.quantity, unit: @ingredient.unit, user_id: @ingredient.user_id }
+      post :create, ingredient: { ingredient_id: @ingredient.ingredient_id, name: @ingredient.name, quantity: @ingredient.quantity, unit: @ingredient.unit, user_id: @ingredient.user_id }
     end
 
     assert_redirected_to ingredient_path(assigns(:ingredient))
@@ -35,7 +35,7 @@ class IngredientsControllerTest < ActionController::TestCase
   end
 
   test "should update ingredient" do
-    patch :update, id: @ingredient, ingredient: { brought: @ingredient.brought, ingredient_id: @ingredient.ingredient_id, name: @ingredient.name, quantity: @ingredient.quantity, unit: @ingredient.unit, user_id: @ingredient.user_id }
+    patch :update, id: @ingredient, ingredient: { ingredient_id: @ingredient.ingredient_id, name: @ingredient.name, quantity: @ingredient.quantity, unit: @ingredient.unit, user_id: @ingredient.user_id }
     assert_redirected_to ingredient_path(assigns(:ingredient))
   end
 
