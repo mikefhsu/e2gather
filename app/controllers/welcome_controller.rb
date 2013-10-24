@@ -1,6 +1,5 @@
 require 'mysql'
 require 'koala'
-require 'fbgraph'
 class WelcomeController < ApplicationController
   @db_info
   @db_fetch_result
