@@ -1,0 +1,14 @@
+Looping through your statuses:<br />
+<ul>
+<%= link_to "Logout", "/logout" %>
+ 
+
+<% @graph_data.each do |status| %>
+<%= status["message"] %> (<i><%=status["updated_time"]%></i>)<hr>
+<% end %>
+
+<% @friends.each do |f| %>
+<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
+<% end %>
+
+</ul>

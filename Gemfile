@@ -4,10 +4,16 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.0'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# gem 'sqlite3'
 
-# Use mysql as the database for Active Record
+# Use mysql as the database
+gem 'mysql'
+
+# Use mysqls as bridge for Active Record
 gem 'mysql2'
+
+gem 'koala'
+gem 'fbgraph'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'

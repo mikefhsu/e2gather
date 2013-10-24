@@ -6,23 +6,13 @@
 </p>
 
 <p>
-  <strong>Name:</strong>
-  <%= @user.name %>
+  <strong>User name:</strong>
+  <%= @user.user_name %>
 </p>
 
 <p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
-
-<p>
-  <strong>Refrigerator list:</strong>
-  <%= @user.refrigerator_list %>
-</p>
-
-<p>
-  <strong>Event list:</strong>
-  <%= @user.event_list %>
+  <strong>User email:</strong>
+  <%= @user.user_email %>
 </p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
