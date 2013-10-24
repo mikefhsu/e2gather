@@ -1,5 +1,5 @@
 E2gather::Application.routes.draw do
-  get "welcome/index"
+  get "e2gather/index"
   resources :events
 
   resources :users
@@ -10,8 +10,8 @@ E2gather::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'welcome#index'
-  get 'welcome/loginFacebook' => 'welcome#loginFacebook'
+  root 'e2gather#index'
+  get 'e2gather/loginFacebook' => 'e2gather#loginFacebook'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

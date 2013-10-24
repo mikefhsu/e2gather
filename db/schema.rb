@@ -11,37 +11,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131023012754) do
-
-  create_table "events", force: true do |t|
-    t.integer  "event_id"
-    t.string   "name"
-    t.string   "location"
-    t.datetime "date_time"
-    t.string   "host"
-    t.text     "ingredient_list"
-    t.text     "guest_list"
-    t.integer  "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "ingredients", force: true do |t|
-    t.integer  "ingredient_id"
-    t.string   "name"
-    t.float    "quantity"
-    t.string   "unit"
-    t.string   "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "users", force: true do |t|
-    t.string   "user_id"
-    t.string   "name"
-    t.string   "email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(version: 0) do
 
 end
