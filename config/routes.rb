@@ -12,7 +12,7 @@ E2gather::Application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'e2gather#index'
   get 'e2gather/loginFacebook' => 'e2gather#loginFacebook'
-
+  get '/logout' =>'e2gather#logout'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
