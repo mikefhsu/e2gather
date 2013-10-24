@@ -1,6 +1,10 @@
 Looping through your statuses:<br />
 <ul>
 <%= link_to "Logout\n", "/logout" %>
+
+<% @friend_list.each do |f| %>
+<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
+<% end %>
  
 <%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)<hr>
 
