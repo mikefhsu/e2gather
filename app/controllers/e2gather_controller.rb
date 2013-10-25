@@ -63,6 +63,14 @@ class E2gatherController < ApplicationController
       format.html {   }			 
     end		
   end
+
+  def ingre
+     @my_input = params['my_input']
+     puts @my_input
+	 redirect_to action: :loginFacebook
+  end
+	
+	
 	
   def sendInvitation
 	
