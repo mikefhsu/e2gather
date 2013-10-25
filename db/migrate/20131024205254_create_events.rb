@@ -5,10 +5,10 @@ class CreateEvents < ActiveRecord::Migration
       t.string :name
       t.string :location
       t.datetime :date_time
-      t.string :host
       t.text :ingredient_list
       t.text :guest_list
       t.integer :status
+      t.string :host
 
       t.timestamps
     end
