@@ -33,8 +33,14 @@ class E2gatherController < ApplicationController
 			if User.where(user_id: user["id"]).exists?
 				@current_user = User.find(user["id"]);
 			else 
+	      email = ""
+	      if user["email"].nil?
+		      email = user["username"] + "@facebook.com"
+	      else
+		      email =  user["email"]
+	      end
 				#@current_user = Users.new
-				@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => user["email"])
+				@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
 				@current_user.save
 			end 
 			
@@ -56,7 +62,7 @@ class E2gatherController < ApplicationController
   def sendInvitation
 	  # send message
   end
-	
+			
 	def getFriendList
     friend_e2gather = []
 		@friends.each do |f|
@@ -65,8 +71,8 @@ class E2gatherController < ApplicationController
 			  friend_e2gather << f
 		  end
 	  end
-	
     return friend_e2gather
 	end
 end
 
+	

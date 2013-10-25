@@ -13,19 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20131024210154) do
 
-  create_table "events", force: true do |t|
-    t.integer  "event_id"
-    t.string   "name"
-    t.string   "location"
-    t.datetime "date_time"
-    t.string   "host"
-    t.text     "ingredient_list"
-    t.text     "guest_list"
-    t.integer  "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "ingredients", force: true do |t|
     t.integer  "ingredient_id"
     t.string   "name"
@@ -36,7 +23,7 @@ ActiveRecord::Schema.define(version: 20131024210154) do
     t.datetime "updated_at"
   end
 
-  create_table "users", force: true do |t|
+  create_table "users", id: false, force: true do |t|
     t.string   "user_id"
     t.string   "name"
     t.string   "email"
