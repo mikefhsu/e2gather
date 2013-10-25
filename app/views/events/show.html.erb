@@ -1,13 +1,13 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Event:</strong>
-  <%= @event.event_id %>
+  <strong>Name:</strong>
+  <%= @event.name %>
 </p>
 
 <p>
-  <strong>Name:</strong>
-  <%= @event.name %>
+  <strong>Host:</strong>
+  <%= @event.host %>
 </p>
 
 <p>
@@ -21,8 +21,8 @@
 </p>
 
 <p>
-  <strong>Host:</strong>
-  <%= @event.host %>
+  <strong>Status:</strong>
+  <%= @event.status %>
 </p>
 
 <p>
@@ -33,11 +33,6 @@
 <p>
   <strong>Guest list:</strong>
   <%= @event.guest_list %>
-</p>
-
-<p>
-  <strong>Status:</strong>
-  <%= @event.status %>
 </p>
 
 <%= link_to 'Edit', edit_event_path(@event) %> |
