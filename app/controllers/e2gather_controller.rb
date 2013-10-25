@@ -1,14 +1,13 @@
 class E2gatherController < ApplicationController
-  @db_info
-  @db_fetch_result
+  #@db_info
+  #@db_fetch_result
   def index
-	session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
-	@auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream") 	
-	puts session.to_s + "<<< session"
-
-  	respond_to do |format|
-			 format.html {  }
-	end
+	  session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
+	  @auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream") 	
+	  puts session.to_s + "<<< session"
+    respond_to do |format|
+      format.html {  }
+	  end
   end
   
   def logout
@@ -39,49 +38,35 @@ class E2gatherController < ApplicationController
 				@current_user.save
 			end 
 			
-
 			
-			
-			@friends = @api.get_connections(user["id"], "friends")
-            @friend_list =getFriendList  
-			 
-			#@friend_list.each do |f|
-				#puts f['id']
-			 #end
+		  @friends = @api.get_connections(user["id"], "friends")
+      @friend_list =getFriendList  
+			@friend_list.each do |f|
+		  puts f['id']
+		end
 		rescue Exception=>ex
 			puts ex.message
 		end
 		
-  
  		respond_to do |format|
 		 format.html {   }			 
-		end
-		
-   end
+		end	
+  end
 	
-		def sendInvitation
-	
-	
-	end
-	
+  def sendInvitation
+	  # send message
+  end
 	
 	def getFriendList
-			friend_e2gather = []
-			@friends.each do |f|
-				if User.where(user_id: (f["id"])).exists?
-					#puts "find friend !"
-					friend_e2gather << f
-				end
-			end
-		return friend_e2gather
-		end
+    friend_e2gather = []
+		@friends.each do |f|
+		  if User.where(user_id: (f["id"])).exists?
+			  puts "find friend !"
+			  friend_e2gather << f
+		  end
+	  end
+	
+    return friend_e2gather
+	end
 end
-
-
-
-
-
-
-
-
 
