@@ -3,7 +3,7 @@ class E2gatherController < ApplicationController
   @db_fetch_result
   def index
 	session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
-	@auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"read_stream") 	
+	@auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream") 	
 	puts session.to_s + "<<< session"
 
   	respond_to do |format|
