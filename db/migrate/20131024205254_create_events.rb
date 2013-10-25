@@ -8,7 +8,7 @@ class CreateEvents < ActiveRecord::Migration
       t.text :ingredient_list
       t.text :guest_list
       t.integer :status
-      t.string :user_id
+      t.string :host
 
       t.timestamps
     end
