@@ -61,7 +61,7 @@ end
 def update_event(event_id, acc_del)
   #Combine accept_event and decline_event
   #Need a method update_guest(user) in Event
-  unless @ingredients.nil? or @ @ingredients.length == 0
+  unless @ingredients.nil? or @ingredients.length == 0
     @ingredients.each { |tmp|
       if tmp.get_id() == event_id
         tmp.update_guest(self, acc_del)
