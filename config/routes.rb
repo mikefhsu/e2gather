@@ -14,6 +14,7 @@ E2gather::Application.routes.draw do
   get 'e2gather/loginFacebook' => 'e2gather#loginFacebook'
   get '/logout' =>'e2gather#logout'
   post 'e2gather/ingre' => 'e2gather#ingre'
+  get 'e2gather/create_user_event' => 'e2gather#create_user_event'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

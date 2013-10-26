@@ -1,0 +1,38 @@
+<% provide(:title, "New User Event") %>
+<h1>New User Event</h1>
+<div class = row>
+  <div class="span6 offset3">
+    <%= form_for(@event) do |f| %>
+
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+
+      <%= f.label :location %>
+      <%= f.text_field :location %>
+
+      <%= f.label :date_time %><br>
+      <%= f.datetime_select :date_time %>
+
+      <%= f.label :ingredient_list %>
+      <%= f.text_field :ingredient_list %>
+
+      <%= f.label :guest_list %>
+      <%= f.text_field :guest_list %>
+
+      <%= f.submit "Create event", class: "btn btn-large btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<style type="text/css">
+input, textarea, select, .uneditable-input {
+  border: 1px solid #bbb;
+  width: 100%;
+  margin-bottom: 15px;
+  @include box_sizing;
+}
+
+input {
+  height: auto !important;
+}
+<style>

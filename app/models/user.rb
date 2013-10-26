@@ -3,14 +3,6 @@ self.primary_key='user_id'
 has_many :ingredients, dependent: :destroy
 has_many :events, dependent: :destroy
 
-def get_name
-  return @name
-end
-
-def set_name(new_name)
-  @name = new_name 
-end
-
 def add_ingredient(new_ingredient)
   if @ingredients.nil?
     @ingredients = Array.new
@@ -44,15 +36,18 @@ def update_ingredent(ingred_id, quant)
     end
 end
 
-def create_event(location, date, name)
+def create_event(name, location, date, ingredients, guests)
   if @events.nil?
     @events = Array.new
   end
 
   Event e = Event.new
+  e.set_host(self.name)
+  e.set_name(name)
   e.set_location(location)
   e.set_date(date)
-  e.set_name(name)
+  e.set_ingredients(ingredients)
+  e.set_guests(guests)
 
   e.save
   @events << e

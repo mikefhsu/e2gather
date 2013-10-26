@@ -6,6 +6,10 @@ Looping through your statuses:<br />
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
+
+<%= form_tag("create_user_event", method: "get") do %>
+    <div><%= submit_tag "Create New Event" %></div>
+<% end %>
  
 
 <% @friend_list.each do |f| %>

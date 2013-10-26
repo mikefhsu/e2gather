@@ -33,7 +33,7 @@ class E2gatherController < ApplicationController
       puts "Get me " + user.to_s()
 			
       if User.where(user_id: user["id"]).exists?
-        @current_user = User.find(user["id"]);
+        @current_user = User.find(user["id"])
       else
         email = ""
         if user["email"].nil?
@@ -45,7 +45,9 @@ class E2gatherController < ApplicationController
 	@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
 	@current_user.save
       end 
-      		
+      
+      puts "Check instance var current_user " + @current_user.name	
+      
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
  
@@ -59,7 +61,9 @@ class E2gatherController < ApplicationController
 
     respond_to do |format|
       format.html {   }
-    end	
+    end
+    
+    puts "Check object " + self.to_s
   end
 
   def ingre
@@ -67,8 +71,16 @@ class E2gatherController < ApplicationController
      puts @my_input
      redirect_to action: :loginFacebook
   end
-	
-	
+  
+  def create_user_event
+     puts "Check object " + self.to_s
+     puts "Test create_user_event"
+     loginFacebook
+     puts "Current user " + @current_user.to_s()
+     @event = Event.new
+     @event.host = @current_user.name
+     render "e2gather/new_user_event"
+  end
 	
   def sendInvitation
 	  # send message
