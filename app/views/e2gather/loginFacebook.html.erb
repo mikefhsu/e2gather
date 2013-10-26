@@ -2,8 +2,7 @@ Looping through your statuses:<br />
 <ul>
 <%= link_to "Logout\n", "/logout" %>
  
- 
- <%= form_tag("ingre", method: "post") do %>
+<%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>

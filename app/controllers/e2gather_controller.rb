@@ -2,12 +2,12 @@ class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
   def index
-	  session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
-	  @auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream") 	
-	  puts session.to_s + "<<< session"
+    session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
+    @auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream,publish_actions") 	
+    puts session.to_s + "<<< session"
     respond_to do |format|
       format.html {  }
-	  end
+    end
   end
   
   def logout
@@ -26,43 +26,46 @@ class E2gatherController < ApplicationController
 		  
     # auth established, now do a graph call:  
     @api = Koala::Facebook::API.new(session[:access_token])
-		begin
-			@graph_data = @api.get_object("/me/statuses", "fields"=>"message")
-			user = @api.get_object("me")
+    begin
+      @graph_data = @api.get_object("/me/statuses", "fields"=>"message")
+      user = @api.get_object("me")
+
+      puts "Get me " + user.to_s()
 			
-			if User.where(user_id: user["id"]).exists?
-				@current_user = User.find(user["id"]);
-			else 
-	      email = ""
-	      if user["email"].nil?
-		      email = user["username"] + "@facebook.com"
-	      else
-		      email =  user["email"]
-	      end
-				#@current_user = Users.new
-				@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
-				@current_user.save
-			end 
-			
-			
-		  @friends = @api.get_connections(user["id"], "friends")
+      if User.where(user_id: user["id"]).exists?
+        @current_user = User.find(user["id"]);
+      else
+        email = ""
+        if user["email"].nil?
+          email = user["username"] + "@facebook.com"
+	else
+          email =  user["email"]
+	end
+	#@current_user = Users.new
+	@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
+	@current_user.save
+      end 
+      		
+      @friends = @api.get_connections(user["id"], "friends")
+      puts "Facebook friends: " + @friends.to_s()     
+ 
       @friend_list =getFriendList  
-			@friend_list.each do |f|
-		  puts f['id']
-		end
-		rescue Exception=>ex
-			puts ex.message
-		end
-		
- 		respond_to do |format|
-		 format.html {   }			 
-		end	
+      @friend_list.each do |f|
+        puts f['id']
+      end
+    rescue Exception=>ex
+      puts ex.message
+    end
+
+    respond_to do |format|
+      format.html {   }
+    end	
   end
 
   def ingre
      @my_input = params['my_input']
      puts @my_input
-	 redirect_to action: :loginFacebook
+     redirect_to action: :loginFacebook
   end
 	
 	
@@ -71,16 +74,19 @@ class E2gatherController < ApplicationController
 	  # send message
   end
 			
-	def getFriendList
-    friend_e2gather = []
-		@friends.each do |f|
-		  if User.where(user_id: (f["id"])).exists?
-			  puts "find friend !"
-			  friend_e2gather << f
-		  end
-	  end
+  def getFriendList
+    friend_e2gather = Array.new
+    @friends.each do |f|
+      if User.where(user_id: (f["id"])).exists?
+        puts "find friend !"
+        friend_e2gather << f
+      else
+        puts "attempt to invite friends joining e2gather"
+        #@api.put_wall_post("Test123", {}, f["id"], {});
+      end
+    end
     return friend_e2gather
-	end
+  end
 end
 
 	
