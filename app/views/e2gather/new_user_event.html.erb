@@ -4,15 +4,17 @@
   <div class="span6 offset3">
     <%= form_tag({:controller => "e2gather", :action => "create_user_event"}, :method=>"post") do %>
 
-      <%= label_tag(:name, "name") %>
+      <b>Name</b>
       <%= text_field_tag(:name) %>
-
-      <%= label_tag(:location, "location") %>
+      
+      <b>Location</b>
       <%= text_field_tag(:location) %>
 
-      <%= label_tag("date_time") %><br>
+      <b>Date and Time</b>
       <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
-      
+
+      <%= hidden_field :status, :value => 1 %>
+
       <div>
       <b>Ingredients for this event</b>
       <table>
@@ -55,9 +57,16 @@
 </div>
 
 <style type="text/css">
-input, textarea, select, .uneditable-input {
+input, textarea, {
   border: 1px solid #bbb;
   width: 100%;
+  margin-bottom: 15px;
+  @include box_sizing;
+}
+
+select, .uneditable-input {
+  border: 1px solid #bbb;
+  width: auto;
   margin-bottom: 15px;
   @include box_sizing;
 }
