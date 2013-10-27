@@ -53,7 +53,8 @@ class E2gatherController < ApplicationController
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
  
-      @friend_list =getFriendList  
+      @ingredient_list = Ingredient.find(:all)
+      @friend_list =getFriendList 
       @friend_list.each do |f|
         puts f['id']
       end
@@ -160,9 +161,22 @@ class E2gatherController < ApplicationController
 end
 end
 
-
-
-
+#  def show_ingredients
+ #   if session[:user].nil?
+ #     puts "Error: no user"
+  #    loginFacebook
+ #   end
+  #  ingredientlist = Array.new
+  #  @ingrdients.each do |i|
+   #   if Ingredient.where(user_id: (i["id"])).exists?
+    #    puts i.name
+    #    ingredientlist << i
+    #  else
+     #   puts "No ingredients in the refrigerator!"
+   #   end
+   # end
+  #  return ingredientlist
+ # end
 
 
 

@@ -15,6 +15,11 @@ Looping through your statuses:<br />
     <div><%= submit_tag "Create New Ingredient" %></div>
 <% end %>
 
+<% @ingredient_list.each do |i| %>
+<%= i["name"] %> <hr>
+<% end %>
+
+
 <% @friend_list.each do |f| %>
 <%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
 <% end %>
