@@ -26,6 +26,7 @@ class E2gatherController < ApplicationController
 		  
     # auth established, now do a graph call:  
     @api = Koala::Facebook::API.new(session[:access_token])
+    session[:api] = @api
     begin
       @graph_data = @api.get_object("/me/statuses", "fields"=>"message")
       user = @api.get_object("me")
@@ -46,7 +47,8 @@ class E2gatherController < ApplicationController
 	@current_user.save
       end 
       
-      puts "Check instance var current_user " + @current_user.name	
+      session[:user] = @current_user       
+      puts "Check instance var current_user " + session[:user].name	
       
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
@@ -55,6 +57,7 @@ class E2gatherController < ApplicationController
       @friend_list.each do |f|
         puts f['id']
       end
+      session[:friend_list] = @friend_list
     rescue Exception=>ex
       puts ex.message
     end
@@ -71,15 +74,64 @@ class E2gatherController < ApplicationController
      puts @my_input
      redirect_to action: :loginFacebook
   end
+ 
+  def render_event_page
+    render "e2gather/new_user_event"
+  end
   
   def create_user_event
      puts "Check object " + self.to_s
      puts "Test create_user_event"
-     loginFacebook
-     puts "Current user " + @current_user.to_s()
+
+     if session[:user].nil?
+      puts "No current user"
+      loginFacebook
+     end
+     
+     @current_user = session[:user]
+     puts "Current user " + @current_user.name
      @event = Event.new
      @event.host = @current_user.name
-     render "e2gather/new_user_event"
+     @event.name = params[:name]
+     @event.location = params[:location]
+     
+     #Set date
+     puts "Show params: " + params.to_s()
+     date_hash = params[:date_time]
+     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
+
+     @event.date_time = date
+     @event.ingredient_list = params[:ingredient_list]
+     @event.guest_list = params[:guest_list]
+
+     #Generate event id for event
+     t = Time.now.to_i
+     @event.event_id = t
+     
+     #0 for incomplete, 1 for complete
+     @event.status = 0
+     
+     puts "Check event id: " + @event.event_id.to_s()
+     
+     if @event.save
+       redirect_to "/e2gather/loginFacebook"
+     else
+       respond_to do |format|
+        format.html { render action: 'new' }
+        format.json { render json: @event.errors, status: :unprocessable_entity }
+       end
+     end
+ 
+     #respond_to do |format|
+     # if @event.save
+     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
+     #   format.json { render action: 'show', status: :created, location: @event }
+     #   redirect_to "e2gather/loginFacebook"
+     # else
+     #   format.html { render action: 'new' }
+     #   format.json { render json: @event.errors, status: :unprocessable_entity }
+     # end
+     #end
   end
 	
   def sendInvitation

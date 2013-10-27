@@ -2,24 +2,24 @@
 <h1>New User Event</h1>
 <div class = row>
   <div class="span6 offset3">
-    <%= form_for(@event) do |f| %>
+    <%= form_tag({:controller => "e2gather", :action => "create_user_event"}, :method=>"post") do %>
 
-      <%= f.label :name %>
-      <%= f.text_field :name %>
+      <%= label_tag(:name, "name") %>
+      <%= text_field_tag(:name) %>
 
-      <%= f.label :location %>
-      <%= f.text_field :location %>
+      <%= label_tag(:location, "location") %>
+      <%= text_field_tag(:location) %>
 
-      <%= f.label :date_time %><br>
-      <%= f.datetime_select :date_time %>
+      <%= label_tag("date_time") %><br>
+      <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
 
-      <%= f.label :ingredient_list %>
-      <%= f.text_field :ingredient_list %>
+      <%= label_tag("ingredient_list") %>
+      <%= text_field_tag(:ingredient_list) %>
 
-      <%= f.label :guest_list %>
-      <%= f.text_field :guest_list %>
+      <%= label_tag("guest_list") %>
+      <%= text_field_tag(:guest_list) %>
 
-      <%= f.submit "Create event", class: "btn btn-large btn-primary" %>
+      <%= submit_tag "Create event", :class => "btn btn-large btn-primary" %>
     <% end %>
   </div>
 </div>
