@@ -12,12 +12,42 @@
 
       <%= label_tag("date_time") %><br>
       <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
+      
+      <div>
+      <b>Ingredients for this event</b>
+      <table>
+        <tr>
+          <td><%= label_tag("Add ingredient") %></td>
+          <td><%= text_field_tag(:ingredient1)%></td>
+        </tr>
+        <tr>
+          <td><%= label_tag("Add ingredient")%></td>
+          <td><%= text_field_tag(:ingredient2)%></td>
+        </tr>
+        <tr>
+          <td><%= label_tag("Add ingredient") %></td>
+          <td><%= text_field_tag(:ingredient3)%></td>
+        </tr>
+      </table>
+      </div>
 
-      <%= label_tag("ingredient_list") %>
-      <%= text_field_tag(:ingredient_list) %>
-
-      <%= label_tag("guest_list") %>
-      <%= text_field_tag(:guest_list) %>
+      <div>
+      <b>Guests for this event</b>
+      <table>
+        <tr>
+          <td><%= label_tag("Add guest") %></td>
+          <td><%= text_field_tag(:guest1)%></td>
+        </tr>
+        <tr>
+          <td><%= label_tag("Add guest")%></td>
+          <td><%= text_field_tag(:guest2)%></td>
+        </tr>
+        <tr>
+          <td><%= label_tag("Add guest") %></td>
+          <td><%= text_field_tag(:guest3)%></td>
+        </tr>
+      </table>
+      </div>
 
       <%= submit_tag "Create event", :class => "btn btn-large btn-primary" %>
     <% end %>
