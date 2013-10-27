@@ -1,14 +1,16 @@
-" Indentation settings for using 2 spaces instead of tabs.
-set shiftwidth=2
-set softtabstop=2
-set expandtab
 
-" When opening a new line and no filetype-specific indenting is enabled, keep
-" the same indent as the line you're currently on. Useful for READMEs, etc.
-set autoindent
+"Fro pathogen and syntastic
+execute pathogen#infect()
+let g:syntastic_ruby_checkers = ['mri', 'rubocop']
 
-" Display line numbers (turn off :set nonumber)
+"Line numbers
 set number
 
-" Adding pathogen.vim for syntastic (https://github.com/scrooloose/syntastic)
-" execute pathogen#infect()
+" Indentation
+set autoindent
+set smartindent
+set smarttab
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
+set expandtab execute pathogen#infect()
