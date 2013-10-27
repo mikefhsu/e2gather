@@ -101,8 +101,15 @@ class E2gatherController < ApplicationController
      date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
 
      @event.date_time = date
-     @event.ingredient_list = params[:ingredient_list]
-     @event.guest_list = params[:guest_list]
+
+     #Temporarily collect ingredient and guest in this way
+     ingredient_list = params[:ingredient1] + "," + params[:ingredient2] + "," + params[:ingredient3]
+     guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
+
+     puts "ingredient_list " + ingredient_list
+     puts "guest_list " + guest_list
+     @event.ingredient_list = ingredient_list
+     @event.guest_list = guest_list
 
      #Generate event id for event
      t = Time.now.to_i
