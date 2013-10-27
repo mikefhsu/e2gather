@@ -11,6 +11,9 @@ Looping through your statuses:<br />
     <div><%= submit_tag "Create New Event" %></div>
 <% end %>
  
+<%= form_tag("render_ingredient_page", method: "get") do %>
+    <div><%= submit_tag "Create New Ingredient" %></div>
+<% end %>
 
 <% @friend_list.each do |f| %>
 <%= f["name"] %> (<i><%=f["id"] %></i>)<hr>

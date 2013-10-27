@@ -121,7 +121,26 @@ class E2gatherController < ApplicationController
         format.json { render json: @event.errors, status: :unprocessable_entity }
        end
      end
- 
+  def render_ingredient_page 
+    render "e2gather/new_ingredient"
+  end
+
+  def create_user_event
+    if session[:user].nil?
+      puts "Error: no user"
+      loginFacebook
+    end
+
+    @current_user = session[:user]
+   
+
+
+
+
+
+
+
+
      #respond_to do |format|
      # if @event.save
      #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
