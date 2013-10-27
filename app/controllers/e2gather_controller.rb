@@ -128,19 +128,37 @@ class E2gatherController < ApplicationController
         format.json { render json: @event.errors, status: :unprocessable_entity }
        end
      end
+  end
+     
   def render_ingredient_page 
     render "e2gather/new_ingredient"
   end
 
-  def create_user_event
+  def create_ingredient
     if session[:user].nil?
       puts "Error: no user"
       loginFacebook
     end
 
     @current_user = session[:user]
-   
+    @ingredient = Ingredient.new
+    @ingredient.user_id = @current_user.id
+    @ingredient.name = params[:name];
+    @ingredient.quantity = params[:quantity]
+    @ingredient.unit = params[:unit]
 
+    ingre_id = Time.now.to_i
+    @ingredient.ingredient_id = ingre_id
+
+    if @ingredient.save
+      redirect_to "/e2gather/loginFacebook"
+    else 
+      respond_to do |format|
+      format.html { render action: 'new' }
+      format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+    end
+end
+end
 
 
 
@@ -158,7 +176,6 @@ class E2gatherController < ApplicationController
      #   format.json { render json: @event.errors, status: :unprocessable_entity }
      # end
      #end
-  end
 	
   def sendInvitation
 	  # send message
