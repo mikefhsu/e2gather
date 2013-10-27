@@ -10,6 +10,8 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
+    puts "In the show method"
+    puts @event.event_id
   end
 
   # GET /events/new
@@ -25,6 +27,10 @@ class EventsController < ApplicationController
   # POST /events.json
   def create
     @event = Event.new(event_params)
+    
+    #Generate event id for event
+    t = Time.now.to_i
+    @event.event_id = t
 
     respond_to do |format|
       if @event.save
@@ -64,7 +70,9 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      @event = Event.find(params[:id])
+      if Event.where(event_id: params["id"]).exists?
+        @event = Event.find(params[:id])
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

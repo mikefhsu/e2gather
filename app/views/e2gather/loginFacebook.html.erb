@@ -1,6 +1,16 @@
 Looping through your statuses:<br />
 <ul>
 <%= link_to "Logout\n", "/logout" %>
+ 
+<%= form_tag("ingre", method: "post") do %>
+    <div><%= text_field_tag :my_input %></div>
+    <div><%= submit_tag "Find E2gathers"%></div>
+<% end %>
+
+<%= form_tag("render_event_page", method: "get") do %>
+    <div><%= submit_tag "Create New Event" %></div>
+<% end %>
+ 
 
 <% @friend_list.each do |f| %>
 <%= f["name"] %> (<i><%=f["id"] %></i>)<hr>

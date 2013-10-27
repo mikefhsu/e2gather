@@ -1,0 +1,38 @@
+<% provide(:title, "New User Event") %>
+<h1>New User Event</h1>
+<div class = row>
+  <div class="span6 offset3">
+    <%= form_tag({:controller => "e2gather", :action => "create_user_event"}, :method=>"post") do %>
+
+      <%= label_tag(:name, "name") %>
+      <%= text_field_tag(:name) %>
+
+      <%= label_tag(:location, "location") %>
+      <%= text_field_tag(:location) %>
+
+      <%= label_tag("date_time") %><br>
+      <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
+
+      <%= label_tag("ingredient_list") %>
+      <%= text_field_tag(:ingredient_list) %>
+
+      <%= label_tag("guest_list") %>
+      <%= text_field_tag(:guest_list) %>
+
+      <%= submit_tag "Create event", :class => "btn btn-large btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<style type="text/css">
+input, textarea, select, .uneditable-input {
+  border: 1px solid #bbb;
+  width: 100%;
+  margin-bottom: 15px;
+  @include box_sizing;
+}
+
+input {
+  height: auto !important;
+}
+<style>

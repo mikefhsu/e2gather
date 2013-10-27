@@ -12,10 +12,6 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :event_id %><br>
-    <%= f.number_field :event_id %>
-  </div>
-  <div class="field">
     <%= f.label :name %><br>
     <%= f.text_field :name %>
   </div>
@@ -28,10 +24,6 @@
     <%= f.datetime_select :date_time %>
   </div>
   <div class="field">
-    <%= f.label :host %><br>
-    <%= f.text_field :host %>
-  </div>
-  <div class="field">
     <%= f.label :ingredient_list %><br>
     <%= f.text_area :ingredient_list %>
   </div>
@@ -42,7 +34,7 @@
   <div class="field">
     <%= f.label :status %><br>
     <%= f.number_field :status %>
-  </div>
+  </div> 
   <div class="actions">
     <%= f.submit %>
   </div>
