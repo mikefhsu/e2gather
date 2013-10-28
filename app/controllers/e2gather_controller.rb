@@ -55,16 +55,13 @@ class E2gatherController < ApplicationController
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
  
-      @ingredient_list = Ingredient.find(:all)
-      @event_list = Event.find(:all)
+      @ingredient_list = Ingredient.all
+      @event_list = Event.all
       @friend_list =getFriendList 
       @friend_list.each do |f|
         puts f['id']
       end
       session[:friend_list] = @friend_list
-      session[:friend_list].each do |f|
-        puts "TEST TEST TEST" + f["id"]
-      end
     rescue Exception=>ex
       puts ex.message
     end
@@ -148,19 +145,19 @@ END_OF_MESSAGE
     #Temporarily collect ingredient and guest in this way
     ingredient = params[:ingredient]
     event_ingredient = Ingredient.select("user_id").where(name: ingredient)
-    puts "event_ingredient " + event_ingredient.to_sentence
-    ingredient_list = Array.new
-    guest_list = Array.new
+    ingredient_list = []
+    guest_list = [] 
     event_ingredient.each do |i|
       if session[:friend_list].nil? 
-        puts "oops"
+        puts "session[:friend_list] is nil"
       else
         session[:friend_list].each do |f|
-          puts "f=" + f["id"] + "   i=" + i["user_id"]
           if f["id"] == i["user_id"]
-            puts " -> SUCCESS"
+            puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
             ingredient_list << ingredient
             guest_list << f["id"]
+          else 
+            puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
           end
         end
         puts "ingredient_list " + ingredient_list.to_sentence
@@ -169,7 +166,7 @@ END_OF_MESSAGE
         @event.guest_list = guest_list
       end
     end
-    #guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
+    redirect_to "e2gather/select_guests"
      
     puts "Check event id: " + @event.event_id.to_s()
      
