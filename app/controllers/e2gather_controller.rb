@@ -39,12 +39,12 @@ class E2gatherController < ApplicationController
         email = ""
         if user["email"].nil?
           email = user["username"] + "@facebook.com"
-	else
+	      else
           email =  user["email"]
-	end
-	#@current_user = Users.new
-	@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
-	@current_user.save
+        end
+	      #@current_user = Users.new
+	      @current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
+	      @current_user.save
       end 
       
       session[:user] = @current_user       
@@ -54,10 +54,12 @@ class E2gatherController < ApplicationController
       puts "Facebook friends: " + @friends.to_s()     
  
       @ingredient_list = Ingredient.find(:all)
+      @event_list = Event.find(:all)
       @friend_list =getFriendList 
       @friend_list.each do |f|
         puts f['id']
       end
+      @friend_list.save
       session[:friend_list] = @friend_list
     rescue Exception=>ex
       puts ex.message
@@ -81,54 +83,69 @@ class E2gatherController < ApplicationController
   end
   
   def create_user_event
-     puts "Check object " + self.to_s
-     puts "Test create_user_event"
+    puts "Check object " + self.to_s
+    puts "Test create_user_event"
 
-     if session[:user].nil?
+    if session[:user].nil?
       puts "No current user"
       loginFacebook
-     end
+    end
      
-     @current_user = session[:user]
-     puts "Current user " + @current_user.name
-     @event = Event.new
-     @event.host = @current_user.name
-     @event.name = params[:name]
-     @event.location = params[:location]
-     
-     #Set date
-     puts "Show params: " + params.to_s()
-     date_hash = params[:date_time]
-     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
+    @current_user = session[:user]
+    puts "Current user " + @current_user.name
+    @event = Event.new
+    # Generate event id for event
+    @event.event_id = Time.now.to_i 
+    # Status: 0-pending, 1-confirmed, 2-cancelled
+    @event.status = 0
 
-     @event.date_time = date
-
-     #Temporarily collect ingredient and guest in this way
-     ingredient_list = params[:ingredient1] + "," + params[:ingredient2] + "," + params[:ingredient3]
-     guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
-
-     puts "ingredient_list " + ingredient_list
-     puts "guest_list " + guest_list
-     @event.ingredient_list = ingredient_list
-     @event.guest_list = guest_list
-
-     #Generate event id for event
-     t = Time.now.to_i
-     @event.event_id = t
+    # Set host, name, and location     
+    @event.host = @current_user.name
+    @event.name = params[:name]
+    @event.location = params[:location]
      
-     #0 for incomplete, 1 for complete
-     @event.status = 0
+    #Set date
+    puts "Show params: " + params.to_s()
+    date_hash = params[:date_time]
+    date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
+    @event.date_time = date
+
+    #Temporarily collect ingredient and guest in this way
+    ingredient = params[:ingredient]
+    event_ingredient = Ingredient.select("user_id").where(name: ingredient)
+    puts "event_ingredient " + event_ingredient.to_sentence
+    ingredient_list = Array.new
+    guest_list = Array.new
+    event_ingredient.each do |i|
+      if session[:friend_list].nil? 
+        puts "oops"
+      else
+        session[:friend_list].each do |f|
+          puts "f=" + f["id"] + "   i=" + i["user_id"]
+          if f["id"] == i["user_id"]
+            puts " -> SUCCESS"
+            ingredient_list << ingredient
+            guest_list << f["id"]
+          end
+        end
+        puts "ingredient_list " + ingredient_list.to_sentence
+        puts "guest_list " + guest_list.to_sentence
+        @event.ingredient_list = ingredient_list
+        @event.guest_list = guest_list
+      end
+    end
+    #guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
      
-     puts "Check event id: " + @event.event_id.to_s()
+    puts "Check event id: " + @event.event_id.to_s()
      
-     if @event.save
-       redirect_to "/e2gather/loginFacebook"
-     else
-       respond_to do |format|
-        format.html { render action: 'new' }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
-       end
-     end
+    if @event.save
+      redirect_to "/e2gather/loginFacebook"
+    else
+      respond_to do |format|
+       format.html { render action: 'new' }
+       format.json { render json: @event.errors, status: :unprocessable_entity }
+      end
+    end
   end
      
   def render_ingredient_page 
@@ -155,11 +172,11 @@ class E2gatherController < ApplicationController
       redirect_to "/e2gather/loginFacebook"
     else 
       respond_to do |format|
-      format.html { render action: 'new' }
-      format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+      end
     end
-end
-end
+  end
 
 #  def show_ingredients
  #   if session[:user].nil?

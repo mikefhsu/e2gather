@@ -10,13 +10,14 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
-    puts "In the show method"
-    puts @event.event_id
+    @event = Event.find(params[:id])
   end
 
   # GET /events/new
   def new
     @event = Event.new
+    @users = User.find(:all)
+    @ingredients = Ingredient.find(:all)
   end
 
   # GET /events/1/edit

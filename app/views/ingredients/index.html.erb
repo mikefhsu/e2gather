@@ -3,11 +3,11 @@
 <table>
   <thead>
     <tr>
-      <th>Ingredient_id</th>
+<!--      <th>Ingredient_id</th>-->
       <th>Name</th>
       <th>Quantity</th>
       <th>Unit</th>
-      <th>User</th>
+<!--      <th>User</th>-->
       <th></th>
       <th></th>
       <th></th>
@@ -17,14 +17,15 @@
   <tbody>
     <% @ingredients.each do |ingredient| %>
       <tr>
-        <td><%= ingredient.ingredient_id %></td>
+<!--        <td><%= ingredient.ingredient_id %></td> -->
         <td><%= ingredient.name %></td>
         <td><%= ingredient.quantity %></td>
         <td><%= ingredient.unit %></td>
-        <td><%= ingredient.user_id %></td>
+<!--        <td><%= ingredient.user_id %></td>-->
         <td><%= link_to 'Show', ingredient %></td>
         <td><%= link_to 'Edit', edit_ingredient_path(ingredient) %></td>
-        <td><%= link_to 'Destroy', ingredient, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', ingredient, method: :delete, data: { 
+          confirm: 'Delete '+ingredient.name+'?' } %></td>
       </tr>
     <% end %>
   </tbody>
