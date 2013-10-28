@@ -17,7 +17,6 @@
 <br>
 <% @event_list.each do |i| %>
   <%= i["name"] %> 
-  <%= link_to 'Show', event %>
 <% end %>
 <br>
 <%= form_tag("render_event_page", method: "get") do %>
