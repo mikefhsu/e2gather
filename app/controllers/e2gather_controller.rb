@@ -106,18 +106,19 @@ END_OF_MESSAGE
   end
 
   def sendmail
-     my_email = params['my_email']
-	 name =  params['name']
+  end
+  
+  def sendmsg
+ 
+	my_email = params['my_email']
+	 #name =  params['name']
 	 id =  params['id']
 	 email = User.find(id)['email']
-	 #puts name
-	 #puts email
-	 #puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-     #puts @my_email
+	 name = User.find(id)['name']
 	 UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
      redirect_to action: :loginFacebook
   end
- 
+  
   def render_event_page
     render "e2gather/new_user_event"
   end
