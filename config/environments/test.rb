@@ -12,6 +12,20 @@ E2gather::Application.configure do
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
 
+ config.action_mailer.smtp_settings = {
+          :address =>  'smtp.gmail.com',
+          :port =>  '587',
+          :domain =>  'e2gather.com',
+          :enable_starttls_auto =>  true,
+          :authentication => 'plain',
+          :user_name => 'e2gather@gmail.com',
+          :password => 'e2gather2013'
+      }
+ config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+config.action_mailer.default_options = {from: 'e2gather@gmail.com'}
+
   # Configure static asset server for tests with Cache-Control for performance.
   config.serve_static_assets  = true
   config.static_cache_control = "public, max-age=3600"
@@ -29,7 +43,7 @@ E2gather::Application.configure do
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
+  #config.action_mailer.delivery_method = :test
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

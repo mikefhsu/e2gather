@@ -1,3 +1,5 @@
+#require 'net/smtp'
+#require 'tlsmail'
 class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
@@ -67,11 +69,42 @@ class E2gatherController < ApplicationController
     end
     
     puts "Check object " + self.to_s
+
   end
 
-  def ingre
-     @my_input = params['my_input']
-     puts @my_input
+  def send_email(to,opts={})
+  opts[:server]      ||= 'smtp.gmail.com'
+  opts[:from]        ||= 'lechangusa@gmail.com'
+  opts[:from_alias]  ||= 'lechangusa@gmail.com'
+  opts[:subject]     ||= "You need to see this"
+  opts[:body]        ||= "Important stuff!"
+
+  msg = <<END_OF_MESSAGE
+From: #{opts[:from_alias]} <#{opts[:from]}>
+To: <#{to}>
+Subject: #{opts[:subject]}
+
+#{opts[:body]}
+END_OF_MESSAGE
+smtp = Net::SMTP.new 'smtp.gmail.com', 587
+    smtp.enable_tls()
+    smtp.start('smtp.gmail.com','lechangusa@gmail.com', 'fortunegod100%', :login) do |smtp|
+    smtp.send_message msg, opts[:from], 'changle@live.cn'
+  end
+end
+
+  
+  
+  def sendmail
+     my_email = params['my_email']
+	 name =  params['name']
+	 id =  params['id']
+	 email = User.find(id)['email']
+	 #puts name
+	 #puts email
+	 #puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+     #puts @my_email
+	 UserMailer.welcome_email(session[:user] ,email, my_email).deliver
      redirect_to action: :loginFacebook
   end
  

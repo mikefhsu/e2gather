@@ -1,8 +1,24 @@
+require 'tlsmail'
 E2gather::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
   config.cache_classes = true
+  #Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+
+config.action_mailer.smtp_settings = {
+          :address =>  'smtp.gmail.com',
+          :port =>  '587',
+          :domain =>  'e2gather.com',
+          :enable_starttls_auto =>  true,
+          :authentication => 'plain',
+          :user_name => 'e2gather@gmail.com',
+          :password => 'e2gather2013'
+      }
+ config.action_mailer.delivery_method = :smtp
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
+config.action_mailer.default_options = {from: 'e2gather@gmail.com'}
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both thread web servers
