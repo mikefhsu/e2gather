@@ -1,22 +1,43 @@
+ 
 <ul>
-<div><%= link_to "Logout\n", "/logout" %></div>
  
-
-<%= "Welcome to E2gather: " +@current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)
+<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)
+<%= link_to "Logout\n", "/logout" %>
+<hr>
+<ul>
  
  
- 
+<br>
+<b>Find</b>
 <%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
 
+<br>
+<b>Events</b>
 <%= form_tag("render_event_page", method: "get") do %>
     <div><%= submit_tag "Create New Event" %></div>
 	
 <% end %>
  
-<div><%=" Your E2Gather Friends:"%></div>
+ 
+ 
+ 
+
+<br>
+<b>Ingredients</b>
+<%= form_tag("render_ingredient_page", method: "get") do %>
+    <div><%= submit_tag "Create New Ingredient" %></div>
+<% end %>
+
+<% @ingredient_list.each do |i| %>
+<%= i["name"] %> <hr>
+<% end %>
+
+<br>
+<b>Friends</b>
+ 
 <% @friend_list.each do |f| %>
 <%= f["name"] %> (<i><%=f["id"] %></i>)
 <%= form_tag("sendmail", method: "post", ) do %>
@@ -28,4 +49,8 @@
 <% end %>
  
  
+ 
+ 
+ 
+</ul>
  
