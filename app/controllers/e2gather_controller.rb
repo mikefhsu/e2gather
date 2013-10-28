@@ -179,7 +179,6 @@ END_OF_MESSAGE
     @event.accept = 0
     @event.reject = 0
  
->>>>>>> 90a74ac113c04b373f043df65f3975dc10c4c0f8
     puts "Check event id: " + @event.event_id.to_s()
      
     if @event.save
