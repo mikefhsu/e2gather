@@ -53,7 +53,8 @@ class E2gatherController < ApplicationController
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
  
-      @friend_list =getFriendList  
+      @ingredient_list = Ingredient.find(:all)
+      @friend_list =getFriendList 
       @friend_list.each do |f|
         puts f['id']
       end
@@ -128,7 +129,57 @@ class E2gatherController < ApplicationController
         format.json { render json: @event.errors, status: :unprocessable_entity }
        end
      end
- 
+  end
+     
+  def render_ingredient_page 
+    render "e2gather/new_ingredient"
+  end
+
+  def create_ingredient
+    if session[:user].nil?
+      puts "Error: no user"
+      loginFacebook
+    end
+
+    @current_user = session[:user]
+    @ingredient = Ingredient.new
+    @ingredient.user_id = @current_user.id
+    @ingredient.name = params[:name];
+    @ingredient.quantity = params[:quantity]
+    @ingredient.unit = params[:unit]
+
+    ingre_id = Time.now.to_i
+    @ingredient.ingredient_id = ingre_id
+
+    if @ingredient.save
+      redirect_to "/e2gather/loginFacebook"
+    else 
+      respond_to do |format|
+      format.html { render action: 'new' }
+      format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+    end
+end
+end
+
+#  def show_ingredients
+ #   if session[:user].nil?
+ #     puts "Error: no user"
+  #    loginFacebook
+ #   end
+  #  ingredientlist = Array.new
+  #  @ingrdients.each do |i|
+   #   if Ingredient.where(user_id: (i["id"])).exists?
+    #    puts i.name
+    #    ingredientlist << i
+    #  else
+     #   puts "No ingredients in the refrigerator!"
+   #   end
+   # end
+  #  return ingredientlist
+ # end
+
+
+
      #respond_to do |format|
      # if @event.save
      #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
@@ -139,7 +190,6 @@ class E2gatherController < ApplicationController
      #   format.json { render json: @event.errors, status: :unprocessable_entity }
      # end
      #end
-  end
 	
   def sendInvitation
 	  # send message
