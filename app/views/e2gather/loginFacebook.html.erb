@@ -11,13 +11,59 @@ Looping through your statuses:<br />
     <div><%= submit_tag "Create New Event" %></div>
 <% end %>
  
-
-<% @friend_list.each do |f| %>
-<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
-<% end %>
- 
 <%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)<hr>
 
- 
+<table border="3" cellpadding="10" cellspacing="10">
+<tr>
+  <td><b>Friends</b></td>
+  <td><b>Ingredients</b></td>
+  <td><b>Events</b></td>
+</tr>
+
+<tr>
+<td>
+  <table border="1" cellpadding="3" cellspacing="3">
+    <tr>
+      <td><b>Name</b></td>
+      <td><b>ID</b></td>
+    </tr>
+    <% @friend_list.each do |f| %>
+     <tr>
+       <td><%= f.name %></td>
+       <td><%= f.user_id%></td>
+     </tr>
+    <% end %>
+  </table>
+</td>
+
+<td>
+  For ingredients
+</td>
+
+<td>
+  <table border="1" cellpadding="3" cellspacing="3">
+   <tr>
+     <td><b>Event</b></td>
+     <td><b>Location</b></td>
+     <td><b>Time</b></td>
+     <td><b>Actions</b></td>
+   </tr>
+   <% @event_list.each do |e| %>
+     <tr>
+       <td><%= e.name %></td>
+       <td><%= e.location %></td>
+       <td><%= e.date_time %></td>
+       <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
+     </tr>
+   <% end %>
+  </table>
+</td>
+</tr>
+</table>
+
+<!--<% @friend_list.each do |f| %>-->
+<!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
+<!--<% end %>-->
+
 </ul>
 

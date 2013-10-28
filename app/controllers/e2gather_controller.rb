@@ -2,6 +2,7 @@ class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
   def index
+    puts "Check session " + session.to_s
     session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
     @auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream,publish_actions") 	
     puts session.to_s + "<<< session"
@@ -13,6 +14,7 @@ class E2gatherController < ApplicationController
   def logout
     session[:oauth] = nil
     session[:access_token] = nil
+    session[:user_id] = nil
     render :text => "You've logged out!"
   end
 	 
@@ -26,7 +28,6 @@ class E2gatherController < ApplicationController
 		  
     # auth established, now do a graph call:  
     @api = Koala::Facebook::API.new(session[:access_token])
-    session[:api] = @api
     begin
       @graph_data = @api.get_object("/me/statuses", "fields"=>"message")
       user = @api.get_object("me")
@@ -47,8 +48,8 @@ class E2gatherController < ApplicationController
 	@current_user.save
       end 
       
-      session[:user] = @current_user       
-      puts "Check instance var current_user " + session[:user].name	
+      session[:user_id] = @current_user.user_id       
+      puts "Check instance var current_user " + session[:user_id]	
       
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
@@ -57,16 +58,24 @@ class E2gatherController < ApplicationController
       @friend_list.each do |f|
         puts f['id']
       end
-      session[:friend_list] = @friend_list
     rescue Exception=>ex
       puts ex.message
     end
+    
+    get_event_list
 
     respond_to do |format|
       format.html {   }
     end
-    
-    puts "Check object " + self.to_s
+  end
+
+  def get_event_list
+    if Event.where(host: @current_user.name).exists?
+      @event_list = Event.find_by_sql("SELECT * FROM events WHERE host = \'" + @current_user.name + "\'" + " ORDER BY events.date_time")
+      puts "Check event list " + @event_list.to_s()
+    else
+      @event_list = Array.new
+    end
   end
 
   def ingre
@@ -83,12 +92,12 @@ class E2gatherController < ApplicationController
      puts "Check object " + self.to_s
      puts "Test create_user_event"
 
-     if session[:user].nil?
+     if session[:user_id].nil?
       puts "No current user"
       loginFacebook
      end
      
-     @current_user = session[:user]
+     @current_user = User.find(session[:user_id])
      puts "Current user " + @current_user.name
      @event = Event.new
      @event.host = @current_user.name
@@ -110,6 +119,9 @@ class E2gatherController < ApplicationController
      puts "guest_list " + guest_list
      @event.ingredient_list = ingredient_list
      @event.guest_list = guest_list
+     @event.unconfirmed = guest_list
+     @event.accept = 0
+     @event.reject = 0
 
      #Generate event id for event
      t = Time.now.to_i
@@ -143,6 +155,10 @@ class E2gatherController < ApplicationController
 	
   def sendInvitation
 	  # send message
+  end
+  
+  def errorpage
+    render "e2gather/error_page"
   end
 			
   def getFriendList
