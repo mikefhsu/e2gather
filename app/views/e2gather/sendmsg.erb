@@ -1,0 +1,7 @@
+  <%=params["id"] %>
+  <%= form_tag("sendMessage", method: "post", ) do %>
+    <%= text_field_tag :my_email %>
+	<%=hidden_field_tag :id, params["id"] %>
+    <%= submit_tag "Send Message" %>
+  <% end %>
+ 
