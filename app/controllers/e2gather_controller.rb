@@ -107,14 +107,14 @@ END_OF_MESSAGE
 
   def sendmail
      my_email = params['my_email']
-	 #name =  params['name']
+	 name =  params['name']
 	 id =  params['id']
 	 email = User.find(id)['email']
 	 #puts name
 	 #puts email
 	 #puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
      #puts @my_email
-	 UserMailer.welcome_email(session[:user] ,email, my_email).deliver
+	 UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
      redirect_to action: :loginFacebook
   end
  

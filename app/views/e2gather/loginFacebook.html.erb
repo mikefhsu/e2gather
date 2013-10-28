@@ -41,8 +41,8 @@
     </tr>
     <% @friend_list.each do |f| %>
      <tr>
-       <td><%= f.name %></td>
-       <td><%= f.user_id%></td>
+       <td><%= f['name'] %></td>
+       <td><%= f['id']%></td>
      </tr>
     <% end %>
   </table>
