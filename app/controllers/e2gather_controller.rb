@@ -140,8 +140,8 @@ END_OF_MESSAGE
     
     # Generate event id for event
     @event.event_id = Time.now.to_i 
-    # Status: 0-pending, 1-confirmed, 2-cancelled
-    @event.status = 0
+    # Status: Pending, Confirmed, Cancelled
+    @event.status = "Pending"
      
     #Set date
     puts "Show params: " + params.to_s()
@@ -174,7 +174,6 @@ END_OF_MESSAGE
     puts "guest_list " + guest_list.to_sentence
     @event.ingredient_list = ingredient_list
     @event.guest_list = guest_list
-    #guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
     @event.unconfirmed = guest_list
     @event.accept = 0
     @event.reject = 0
