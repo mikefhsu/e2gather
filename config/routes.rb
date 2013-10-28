@@ -1,9 +1,9 @@
 E2gather::Application.routes.draw do
   get "e2gather/index"
+  
+  # Example resource route (maps HTTP verbs to controller actions automatically):
   resources :events
-
   resources :users
-
   resources :ingredients
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -11,23 +11,31 @@ E2gather::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'e2gather#index'
+  
+  # Example of regular route:
+  #   get 'products/:id' => 'catalog#view'
   get 'e2gather/loginFacebook' => 'e2gather#loginFacebook'
   get '/logout' =>'e2gather#logout'
-  post 'e2gather/ingre' => 'e2gather#ingre'
+  #post 'e2gather/ingre' => 'e2gather#sendmail'
+  post 'e2gather/sendmail' => 'e2gather#sendmail'
+  post 'e2gather/sendMessage' => 'e2gather#sendmsg'
   get 'e2gather/render_event_page' => 'e2gather#render_event_page'
   post 'e2gather/create_user_event' => 'e2gather#create_user_event'
   get 'e2gather/render_ingredient_page' => 'e2gather#render_ingredient_page'
   post 'e2gather/create_ingredient' => 'e2gather#create_ingredient'
   get 'e2gather/ingredient/:id' => 'e2gather#show_ingredient' 
   get 'e2gather/ingredient/update/:id' => 'e2gather#update_ingredient' 
+  get 'events/view_event_page/:e_id' => 'events#view_event_page'
+  post 'users/update_invitation' => 'users#update_invitation'
+  get 'e2gather/errorpage' => 'e2gather#errorpage'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
+  get 'e2gather/render_ingredient_page' => 'e2gather#render_ingredient_page'
+  post 'e2gather/create_ingredient' => 'e2gather#create_ingredient'
+
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
 
   # Example resource route with options:
   #   resources :products do

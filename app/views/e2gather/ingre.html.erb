@@ -1,0 +1,16 @@
+<ul>
+<%= link_to "Logout\n", "/logout" %>
+ 
+ 
+ <%= form_tag("ingre", method: "post") do %>
+    <div><%= text_field_tag :my_input %></div>
+    <div><%= submit_tag "Find E2gathers"%></div>
+<% end %>
+ 
+
+<% @friend_list.each do |f| %>
+<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
+<% end %>
+ 
+<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)<hr>
+ 

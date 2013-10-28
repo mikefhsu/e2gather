@@ -1,33 +1,97 @@
-Looping through your statuses:<br />
 <ul>
-<%= link_to "Logout\n", "/logout" %>
  
+<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)
+<%= link_to "Logout\n", "/logout" %>
+<hr>
+<ul>
+ 
+<br>
+<b>Find</b>
 <%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
 
+<br>
+<b>Events</b>
+<br>
+<% @event_list.each do |i| %>
+  <%= i["name"] %> 
+<% end %>
+<br>
 <%= form_tag("render_event_page", method: "get") do %>
     <div><%= submit_tag "Create New Event" %></div>
 <% end %>
  
-<%= form_tag("render_ingredient_page", method: "get") do %>
-    <div><%= submit_tag "Create New Ingredient" %></div>
-<% end %>
+<table border="3" cellpadding="10" cellspacing="10">
+<tr>
+  <td><b>Friends</b></td>
+  <td><b>Ingredients</b></td>
+  <td><b>Events</b></td>
+</tr>
 
 <ul id="ingredients">
 <% @ingredient_list.each do |i| %>
 <li><%= link_to i["name"],{:action => 'show_ingredient', :id => i.id} -%></li> 
 <% end %>
 </ul>
+<tr>
+<td>
+  <table border="1" cellpadding="3" cellspacing="3">
+    <tr>
+      <td><b>Name</b></td>
+      <td><b>Message</b></td>
+    </tr>
+    <% session[:friend_list].each do |f| %>
+     <tr>
+       <td><%= f['name'] %></td>
+       <td><%= button_to "Send Message", {:controller => "e2gather", :action => "sendmail", :method => :post, :id => f['id'] }%></td>
+     </tr>
+    <% end %>
+  </table>
+</td>
 
+<td>
+  For ingredients
+</td>
 
-<% @friend_list.each do |f| %>
-<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>
+<td>
+  <table border="1" cellpadding="3" cellspacing="3">
+   <tr>
+     <td><b>Event</b></td>
+     <td><b>Location</b></td>
+     <td><b>Time</b></td>
+     <td><b>Actions</b></td>
+   </tr>
+   <% @event_list.each do |e| %>
+     <tr>
+       <td><%= e.name %></td>
+       <td><%= e.location %></td>
+       <td><%= e.date_time %></td>
+       <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
+     </tr>
+   <% end %>
+  </table>
+</td>
+</tr>
+</table>
+
+<!--<% session[:friend_list].each do |f| %>-->
+<!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
+<!--<% end %>-->
+
+<br>
+<b>Ingredients</b>
+<br>
+<% @ingredient_list.each do |i| %>
+  <%= i["name"] %> 
 <% end %>
- 
-<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)<hr>
+<br>
+<%= form_tag("render_ingredient_page", method: "get") do %>
+  <div><%= submit_tag "Add Ingredient" %></div>
+<% end %>
 
+ 
  
 </ul>
-
+ 

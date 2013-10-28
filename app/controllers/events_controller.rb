@@ -10,13 +10,21 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
-    puts "In the show method"
-    puts @event.event_id
+    puts "In show"
+  end
+
+  def view_event_page
+    puts "Check params in view_event_page " + params.to_s 
+    @current_event = Event.find(params[:e_id])
+    render "events/view_event"
+    return
   end
 
   # GET /events/new
   def new
     @event = Event.new
+    @users = User.find(:all)
+    @ingredients = Ingredient.find(:all)
   end
 
   # GET /events/1/edit
@@ -70,7 +78,7 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      if Event.where(event_id: params["id"]).exists?
+      if Event.where(id: params["id"]).exists?
         @event = Event.find(params[:id])
       end
     end
