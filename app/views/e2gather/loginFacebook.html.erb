@@ -1,12 +1,24 @@
-Looping through your statuses:<br />
 <ul>
-<%= link_to "Logout\n", "/logout" %>
  
+<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)
+<%= link_to "Logout\n", "/logout" %>
+<hr>
+<ul>
+ 
+<br>
+<b>Find</b>
 <%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
 
+<br>
+<b>Events</b>
+<br>
+<% @event_list.each do |i| %>
+  <%= i["name"] %> 
+<% end %>
+<br>
 <%= form_tag("render_event_page", method: "get") do %>
     <div><%= submit_tag "Create New Event" %></div>
 <% end %>
@@ -65,5 +77,30 @@ Looping through your statuses:<br />
 <!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
 <!--<% end %>-->
 
-</ul>
+<br>
+<b>Ingredients</b>
+<br>
+<% @ingredient_list.each do |i| %>
+  <%= i["name"] %> 
+<% end %>
+<br>
+<%= form_tag("render_ingredient_page", method: "get") do %>
+  <div><%= submit_tag "Add Ingredient" %></div>
+<% end %>
 
+
+<br>
+<b>Friends</b>
+<br>
+<% @friend_list.each do |f| %>
+  <%= f["name"] %> (<i><%=f["id"] %></i>)
+  <%= form_tag("sendmail", method: "post", ) do %>
+    <%= text_field_tag :my_email %>
+	  <%=hidden_field_tag :name, f["name"] %>
+	  <%=hidden_field_tag :id, f["id"] %>
+    <%= submit_tag "Send Email to " +f["name"] %>
+  <% end %>
+<% end %>
+ 
+</ul>
+ 

@@ -1,11 +1,6 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Ingredient:</strong>
-  <%= @ingredient.ingredient_id %>
-</p>
-
-<p>
   <strong>Name:</strong>
   <%= @ingredient.name %>
 </p>
@@ -19,11 +14,11 @@
   <strong>Unit:</strong>
   <%= @ingredient.unit %>
 </p>
-
+<!--
 <p>
   <strong>User:</strong>
   <%= @ingredient.user_id %>
 </p>
-
+-->
 <%= link_to 'Edit', edit_ingredient_path(@ingredient) %> |
 <%= link_to 'Back', ingredients_path %>

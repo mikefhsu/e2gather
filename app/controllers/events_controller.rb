@@ -17,11 +17,14 @@ class EventsController < ApplicationController
     puts "Check params in view_event_page " + params.to_s 
     @current_event = Event.find(params[:e_id])
     render "events/view_event"
+    return
   end
 
   # GET /events/new
   def new
     @event = Event.new
+    @users = User.find(:all)
+    @ingredients = Ingredient.find(:all)
   end
 
   # GET /events/1/edit

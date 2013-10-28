@@ -1,22 +1,22 @@
 <% provide(:title, "New User Event") %>
-<h1>New User Event</h1>
+<h1>New Event</h1>
 <div class = row>
   <div class="span6 offset3">
     <%= form_tag({:controller => "e2gather", :action => "create_user_event"}, :method=>"post") do %>
-
-      <b>Name</b>
+      <b><%= label_tag(:name, "Name") %></b>
       <%= text_field_tag(:name) %>
-      
-      <b>Location</b>
+      <br>
+      <b><%= label_tag(:location, "Location") %></b>
       <%= text_field_tag(:location) %>
-
-      <b>Date and Time</b>
+      <br>
+      <b><%= label_tag(:date_time, "Date and Time") %></b>
+      <br>
       <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
 
-      <%= hidden_field :status, :value => 1 %>
+      <%= hidden_field :status, :value => 0 %>
 
       <div>
-      <b>Ingredients for this event</b>
+      <b><%= label_tag(:ingredient_list, "Ingredients") %></b>
       <table>
         <tr>
           <td><%= label_tag("Add ingredient") %></td>
@@ -26,7 +26,7 @@
       </div>
 
       <div>
-      <b>Guests for this event</b>
+      <b><%= label_tag(:guest_list, "Guests") %></b>
       <table>
         <tr>
           <td><%= label_tag("Add guest") %></td>
@@ -49,7 +49,7 @@
 </div>
 
 <style type="text/css">
-input, textarea, {
+input, textarea {
   border: 1px solid #bbb;
   width: 100%;
   margin-bottom: 15px;

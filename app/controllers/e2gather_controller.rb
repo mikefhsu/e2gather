@@ -1,3 +1,5 @@
+#require 'net/smtp'
+#require 'tlsmail'
 class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
@@ -17,7 +19,7 @@ class E2gatherController < ApplicationController
     session[:user_id] = nil
     render :text => "You've logged out!"
   end
-	 
+  
   def loginFacebook 
     if params[:code]
       # acknowledge code and get access token from FB
@@ -40,12 +42,12 @@ class E2gatherController < ApplicationController
         email = ""
         if user["email"].nil?
           email = user["username"] + "@facebook.com"
-	else
+	      else
           email =  user["email"]
-	end
-	#@current_user = Users.new
-	@current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
-	@current_user.save
+        end
+	      #@current_user = Users.new
+	      @current_user=User.new(:user_id => user["id"], :name => user["name"],:email => email)
+	      @current_user.save
       end 
       
       session[:user_id] = @current_user.user_id       
@@ -54,9 +56,16 @@ class E2gatherController < ApplicationController
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
  
-      @friend_list =getFriendList  
+      @ingredient_list = Ingredient.find(:all)
+      @event_list = Event.find(:all)
+      @friend_list =getFriendList 
       @friend_list.each do |f|
         puts f['id']
+      end
+
+      session[:friend_list] = @friend_list
+      session[:friend_list].each do |f|
+        puts "TEST TEST TEST" + f["id"]
       end
     rescue Exception=>ex
       puts ex.message
@@ -78,9 +87,37 @@ class E2gatherController < ApplicationController
     end
   end
 
-  def ingre
-     @my_input = params['my_input']
-     puts @my_input
+  def send_email(to,opts={})
+    opts[:server]      ||= 'smtp.gmail.com'
+    opts[:from]        ||= 'lechangusa@gmail.com'
+    opts[:from_alias]  ||= 'lechangusa@gmail.com'
+    opts[:subject]     ||= "You need to see this"
+    opts[:body]        ||= "Important stuff!"
+
+    msg = <<END_OF_MESSAGE
+From: #{opts[:from_alias]} <#{opts[:from]}>
+To: <#{to}>
+Subject: #{opts[:subject]}
+
+#{opts[:body]}
+END_OF_MESSAGE
+    smtp = Net::SMTP.new 'smtp.gmail.com', 587
+    smtp.enable_tls()
+    smtp.start('smtp.gmail.com','lechangusa@gmail.com', 'fortunegod100%', :login) do |smtp|
+      smtp.send_message msg, opts[:from], 'changle@live.cn'
+    end
+  end
+
+  def sendmail
+     my_email = params['my_email']
+	 #name =  params['name']
+	 id =  params['id']
+	 email = User.find(id)['email']
+	 #puts name
+	 #puts email
+	 #puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+     #puts @my_email
+	 UserMailer.welcome_email(session[:user] ,email, my_email).deliver
      redirect_to action: :loginFacebook
   end
  
@@ -89,68 +126,103 @@ class E2gatherController < ApplicationController
   end
   
   def create_user_event
-     puts "Check object " + self.to_s
-     puts "Test create_user_event"
+    puts "Check object " + self.to_s
+    puts "Test create_user_event"
 
-     if session[:user_id].nil?
-      puts "No current user"
-      loginFacebook
-     end
+    if session[:user_id].nil?
+     puts "No current user"
+     loginFacebook
+    end
+ 
+    @current_user = User.find(session[:user_id])
+    puts "Current user " + @current_user.name
+    @event = Event.new
+    @event.host = @current_user.name
+    @event.name = params[:name]
+    @event.location = params[:location]
+    
+    # Generate event id for event
+    @event.event_id = Time.now.to_i 
+    # Status: 0-pending, 1-confirmed, 2-cancelled
+    @event.status = 0
      
-     @current_user = User.find(session[:user_id])
-     puts "Current user " + @current_user.name
-     @event = Event.new
-     @event.host = @current_user.name
-     @event.name = params[:name]
-     @event.location = params[:location]
-     
-     #Set date
-     puts "Show params: " + params.to_s()
-     date_hash = params[:date_time]
-     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
+    #Set date
+    puts "Show params: " + params.to_s()
+    date_hash = params[:date_time]
+    date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
+    @event.date_time = date
 
-     @event.date_time = date
+    #Temporarily collect ingredient and guest in this way
+    ingredient = params[:ingredient]
+    event_ingredient = Ingredient.select("user_id").where(name: ingredient)
+    puts "event_ingredient " + event_ingredient.to_sentence
+    ingredient_list = Array.new
+    guest_list = Array.new
 
-     #Temporarily collect ingredient and guest in this way
-     ingredient_list = params[:ingredient1] + "," + params[:ingredient2] + "," + params[:ingredient3]
-     guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
+    event_ingredient.each do |i|
+      if session[:friend_list].nil? 
+        puts "oops"
+      else
+        session[:friend_list].each do |f|
+        puts "f=" + f["id"] + "   i=" + i["user_id"]
+        if f["id"] == i["user_id"]
+          puts " -> SUCCESS"
+          ingredient_list << ingredient
+          guest_list << f["id"]
+        end
+        end
+      end
+    end
 
-     puts "ingredient_list " + ingredient_list
-     puts "guest_list " + guest_list
-     @event.ingredient_list = ingredient_list
-     @event.guest_list = guest_list
-     @event.unconfirmed = guest_list
-     @event.accept = 0
-     @event.reject = 0
-
-     #Generate event id for event
-     t = Time.now.to_i
-     @event.event_id = t
+    puts "ingredient_list " + ingredient_list.to_sentence
+    puts "guest_list " + guest_list.to_sentence
+    @event.ingredient_list = ingredient_list
+    @event.guest_list = guest_list
+    #guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
+    @event.unconfirmed = guest_list
+    @event.accept = 0
+    @event.reject = 0
+ 
+    puts "Check event id: " + @event.event_id.to_s()
      
-     #0 for incomplete, 1 for complete
-     @event.status = 0
-     
-     puts "Check event id: " + @event.event_id.to_s()
-     
-     if @event.save
-       redirect_to "/e2gather/loginFacebook"
-     else
-       respond_to do |format|
+    if @event.save
+      redirect_to "/e2gather/loginFacebook"
+    else
+      respond_to do |format|
         format.html { render action: 'new' }
         format.json { render json: @event.errors, status: :unprocessable_entity }
-       end
-     end
- 
-     #respond_to do |format|
-     # if @event.save
-     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
-     #   format.json { render action: 'show', status: :created, location: @event }
-     #   redirect_to "e2gather/loginFacebook"
-     # else
-     #   format.html { render action: 'new' }
-     #   format.json { render json: @event.errors, status: :unprocessable_entity }
-     # end
-     #end
+      end
+    end
+  end
+     
+  def render_ingredient_page 
+    render "e2gather/new_ingredient"
+  end
+
+  def create_ingredient
+    if session[:user].nil?
+      puts "Error: no user"
+      loginFacebook
+    end
+
+    @current_user = session[:user]
+    @ingredient = Ingredient.new
+    @ingredient.user_id = @current_user.id
+    @ingredient.name = params[:name];
+    @ingredient.quantity = params[:quantity]
+    @ingredient.unit = params[:unit]
+
+    ingre_id = Time.now.to_i
+    @ingredient.ingredient_id = ingre_id
+
+    if @ingredient.save
+      redirect_to "/e2gather/loginFacebook"
+    else 
+      respond_to do |format|
+        format.html { render action: 'new' }
+        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+      end
+    end
   end
 	
   def sendInvitation

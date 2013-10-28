@@ -33,8 +33,13 @@
   </div>
   <div class="field">
     <%= f.label :status %><br>
-    <%= f.number_field :status %>
-  </div> 
+    <%= f.radio_button :status, 0 %>
+    <%= f.label 0, 'Waiting for friend responses' %><br>
+    <%= f.radio_button :status, 1 %>
+    <%= f.label 1, 'Event Confirmed' %><br>
+    <%= f.radio_button :status, 2 %>
+    <%= f.label 2, 'Event Cancelled' %><br>
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>

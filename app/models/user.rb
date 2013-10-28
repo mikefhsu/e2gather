@@ -21,7 +21,7 @@ def delete_ingredient(ingred_id)
   end
 end
 
-def update_ingredent(ingred_id, quant)
+def update_ingredient(ingred_id, quant)
     unless @ingredients.nil? or @ingredients.length == 0
       @ingredeints.each { |tmp|
         if tmp.get_id() == ingred_id
@@ -67,8 +67,8 @@ def update_event(event_id, acc_del)
 end
 
 def get_events
-  unless @ingredients.nil?
-    return @ingredients
+  unless @events.nil?
+    return @events
   end
 end
 

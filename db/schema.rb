@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131027205015) do
+ActiveRecord::Schema.define(version: 20131028062540) do
 
   create_table "events", force: true do |t|
     t.integer  "event_id"
@@ -21,9 +21,12 @@ ActiveRecord::Schema.define(version: 20131027205015) do
     t.string   "host"
     t.text     "ingredient_list"
     t.text     "guest_list"
-    t.integer  "status"
+    t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "unconfirmed"
+    t.integer  "accept"
+    t.integer  "reject"
   end
 
   create_table "ingredients", force: true do |t|
@@ -43,8 +46,8 @@ ActiveRecord::Schema.define(version: 20131027205015) do
     t.datetime "updated_at"
   end
 
-  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "user_id"

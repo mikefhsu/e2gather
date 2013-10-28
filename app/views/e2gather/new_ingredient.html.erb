@@ -1,0 +1,20 @@
+<% provide(:title, "New Ingredient") %>
+<h1>New Ingredient</h1>
+<div class = "field">
+  <div class="span6 offset3">
+    <%= form_tag({:controller => "e2gather", :action => "create_ingredient"}, :method=>"post") do %>    
+
+    <%=label_tag(:name, "Name") %>
+    <%= text_field_tag(:name) %>
+    <br>
+    <%= label_tag(:quantity, "Quantity") %>
+    <%= text_field_tag(:quantity) %>
+    <br>
+    <%= label_tag(:unit, "Unit") %>
+    <%= text_field_tag(:unit) %>
+    <br>
+    <%= submit_tag "Submit" %>
+  <% end %>
+  </div>
+</div>
+
