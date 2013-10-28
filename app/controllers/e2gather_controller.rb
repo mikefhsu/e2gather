@@ -21,7 +21,7 @@ class E2gatherController < ApplicationController
   end
   
   def loginFacebook 
-    if params[:code]
+    if params[:code] and session[:access_token].nil?
       # acknowledge code and get access token from FB
       session[:access_token] = session[:oauth].get_access_token(params[:code])
     end		
@@ -84,26 +84,7 @@ class E2gatherController < ApplicationController
     end
   end
 
-  def send_email(to,opts={})
-    opts[:server]      ||= 'smtp.gmail.com'
-    opts[:from]        ||= 'lechangusa@gmail.com'
-    opts[:from_alias]  ||= 'lechangusa@gmail.com'
-    opts[:subject]     ||= "You need to see this"
-    opts[:body]        ||= "Important stuff!"
-
-    msg = <<END_OF_MESSAGE
-From: #{opts[:from_alias]} <#{opts[:from]}>
-To: <#{to}>
-Subject: #{opts[:subject]}
-
-#{opts[:body]}
-END_OF_MESSAGE
-    smtp = Net::SMTP.new 'smtp.gmail.com', 587
-    smtp.enable_tls()
-    smtp.start('smtp.gmail.com','lechangusa@gmail.com', 'fortunegod100%', :login) do |smtp|
-      smtp.send_message msg, opts[:from], 'changle@live.cn'
-    end
-  end
+ 
 
   def sendmail
   end
