@@ -24,6 +24,9 @@ ActiveRecord::Schema.define(version: 20131028062540) do
     t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "unconfirmed"
+    t.integer  "accept"
+    t.integer  "reject"
   end
 
   create_table "ingredients", force: true do |t|

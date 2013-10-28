@@ -10,7 +10,14 @@ class EventsController < ApplicationController
   # GET /events/1
   # GET /events/1.json
   def show
-    @event = Event.find(params[:id])
+    puts "In show"
+  end
+
+  def view_event_page
+    puts "Check params in view_event_page " + params.to_s 
+    @current_event = Event.find(params[:e_id])
+    render "events/view_event"
+    return
   end
 
   # GET /events/new

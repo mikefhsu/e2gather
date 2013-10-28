@@ -4,6 +4,7 @@ class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
   def index
+    puts "Check session " + session.to_s
     session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
     @auth_url =  session[:oauth].url_for_oauth_code(:permissions=>"email,publish_stream,publish_actions") 	
     puts session.to_s + "<<< session"
@@ -15,6 +16,7 @@ class E2gatherController < ApplicationController
   def logout
     session[:oauth] = nil
     session[:access_token] = nil
+    session[:user_id] = nil
     render :text => "You've logged out!"
   end
   
@@ -28,7 +30,6 @@ class E2gatherController < ApplicationController
 		  
     # auth established, now do a graph call:  
     @api = Koala::Facebook::API.new(session[:access_token])
-    session[:api] = @api
     begin
       @graph_data = @api.get_object("/me/statuses", "fields"=>"message")
       user = @api.get_object("me")
@@ -49,8 +50,8 @@ class E2gatherController < ApplicationController
 	      @current_user.save
       end 
       
-      session[:user] = @current_user       
-      puts "Check instance var current_user " + session[:user].name	
+      session[:user_id] = @current_user.user_id       
+      puts "Check instance var current_user " + session[:user_id]	
       
       @friends = @api.get_connections(user["id"], "friends")
       puts "Facebook friends: " + @friends.to_s()     
@@ -61,17 +62,26 @@ class E2gatherController < ApplicationController
       @friend_list.each do |f|
         puts f['id']
       end
+
       session[:friend_list] = @friend_list
     rescue Exception=>ex
       puts ex.message
     end
+    
+    get_event_list
 
     respond_to do |format|
       format.html {   }
     end
-    
-    puts "Check object " + self.to_s
+  end
 
+  def get_event_list
+    if Event.where(host: @current_user.name).exists?
+      @event_list = Event.find_by_sql("SELECT * FROM events WHERE host = \'" + @current_user.name + "\'" + " ORDER BY events.date_time")
+      puts "Check event list " + @event_list.to_s()
+    else
+      @event_list = Array.new
+    end
   end
 
   def send_email(to,opts={})
@@ -95,8 +105,6 @@ END_OF_MESSAGE
     end
   end
 
-  
-  
   def sendmail
      my_email = params['my_email']
 	 #name =  params['name']
@@ -118,23 +126,22 @@ END_OF_MESSAGE
     puts "Check object " + self.to_s
     puts "Test create_user_event"
 
-    if session[:user].nil?
-      puts "No current user"
-      loginFacebook
+    if session[:user_id].nil?
+     puts "No current user"
+     loginFacebook
     end
-     
-    @current_user = session[:user]
+ 
+    @current_user = User.find(session[:user_id])
     puts "Current user " + @current_user.name
     @event = Event.new
+    @event.host = @current_user.name
+    @event.name = params[:name]
+    @event.location = params[:location]
+    
     # Generate event id for event
     @event.event_id = Time.now.to_i 
     # Status: 0-pending, 1-confirmed, 2-cancelled
     @event.status = 0
-
-    # Set host, name, and location     
-    @event.host = @current_user.name
-    @event.name = params[:name]
-    @event.location = params[:location]
      
     #Set date
     puts "Show params: " + params.to_s()
@@ -160,22 +167,27 @@ END_OF_MESSAGE
             puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
           end
         end
-        puts "ingredient_list " + ingredient_list.to_sentence
-        puts "guest_list " + guest_list.to_sentence
-        @event.ingredient_list = ingredient_list
-        @event.guest_list = guest_list
       end
     end
-    redirect_to "e2gather/select_guests"
-     
+
+    puts "ingredient_list " + ingredient_list.to_sentence
+    puts "guest_list " + guest_list.to_sentence
+    @event.ingredient_list = ingredient_list
+    @event.guest_list = guest_list
+    #guest_list = params[:guest1] + "," + params[:guest2] + "," + params[:guest3]
+    @event.unconfirmed = guest_list
+    @event.accept = 0
+    @event.reject = 0
+ 
+>>>>>>> 90a74ac113c04b373f043df65f3975dc10c4c0f8
     puts "Check event id: " + @event.event_id.to_s()
      
     if @event.save
       redirect_to "/e2gather/loginFacebook"
     else
       respond_to do |format|
-       format.html { render action: 'new' }
-       format.json { render json: @event.errors, status: :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.json { render json: @event.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -209,39 +221,13 @@ END_OF_MESSAGE
       end
     end
   end
-
-#  def show_ingredients
- #   if session[:user].nil?
- #     puts "Error: no user"
-  #    loginFacebook
- #   end
-  #  ingredientlist = Array.new
-  #  @ingrdients.each do |i|
-   #   if Ingredient.where(user_id: (i["id"])).exists?
-    #    puts i.name
-    #    ingredientlist << i
-    #  else
-     #   puts "No ingredients in the refrigerator!"
-   #   end
-   # end
-  #  return ingredientlist
- # end
-
-
-
-     #respond_to do |format|
-     # if @event.save
-     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
-     #   format.json { render action: 'show', status: :created, location: @event }
-     #   redirect_to "e2gather/loginFacebook"
-     # else
-     #   format.html { render action: 'new' }
-     #   format.json { render json: @event.errors, status: :unprocessable_entity }
-     # end
-     #end
 	
   def sendInvitation
 	  # send message
+  end
+  
+  def errorpage
+    render "e2gather/error_page"
   end
 			
   def getFriendList

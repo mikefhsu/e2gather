@@ -61,6 +61,53 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_invitation
+
+    puts "Check params " + params.to_s
+
+    if Event.where(id: params[:e_id]).exists?
+      @current_event = Event.find(params[:e_id])
+      @current_user = User.find(session[:user_id])
+
+      if @current_event.host == @current_user.name
+        render "users/you_host"
+        return
+      end
+
+      guest_list = @current_event.guest_list.split(",")
+     
+      guest_list.each {|tmp|
+        if tmp == @current_user.name
+
+          if params[:option] == 1
+            @current_event.accept += 1
+          else
+            @current_event.reject += 1
+          end
+
+          guest_list.delete(tmp)
+          break
+        end
+      }
+
+      new_guest_list = ""
+      guest_list.each {|tmp|
+        new_guest_list = new_guest_list + tmp
+      }
+
+      @current_event.guest_list = new_guest_list
+      puts "New accept " + @current_event.accept.to_s
+      puts "New guest_list " + @current_event.guest_list.to_s
+      
+      if @current_event.save
+        redirect_to "/e2gather/loginFacebook"
+        return
+      end
+    end
+    redirect_to "/e2gather/errorpage"
+    return
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

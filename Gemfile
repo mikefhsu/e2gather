@@ -15,6 +15,7 @@ gem 'mysql2'
 
 #gem 'koala'
 #gem 'fbgraph'
+gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
