@@ -78,7 +78,7 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      if Event.where(event_id: params["id"]).exists?
+      if Event.where(id: params["id"]).exists?
         @event = Event.find(params[:id])
       end
     end
