@@ -17,7 +17,7 @@ class E2gatherController < ApplicationController
     session[:access_token] = nil
     render :text => "You've logged out!"
   end
-	 
+  
   def loginFacebook 
     if params[:code]
       # acknowledge code and get access token from FB
@@ -61,8 +61,10 @@ class E2gatherController < ApplicationController
       @friend_list.each do |f|
         puts f['id']
       end
-      @friend_list.save
       session[:friend_list] = @friend_list
+      session[:friend_list].each do |f|
+        puts "TEST TEST TEST" + f["id"]
+      end
     rescue Exception=>ex
       puts ex.message
     end
