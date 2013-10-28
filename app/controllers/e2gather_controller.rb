@@ -196,12 +196,12 @@ END_OF_MESSAGE
   end
 
   def create_ingredient
-    if session[:user].nil?
+    if session[:user_id].nil?
       puts "Error: no user"
       loginFacebook
     end
 
-    @current_user = session[:user]
+    @current_user = User.find(session[:user_id])
     @ingredient = Ingredient.new
     @ingredient.user_id = @current_user.id
     @ingredient.name = params[:name];
