@@ -15,9 +15,11 @@ Looping through your statuses:<br />
     <div><%= submit_tag "Create New Ingredient" %></div>
 <% end %>
 
+<ul id="ingredients">
 <% @ingredient_list.each do |i| %>
-<%= i["name"] %> <hr>
+<li><%= link_to i["name"],{:action => 'show_ingredient', :id => i.id} -%></li> 
 <% end %>
+</ul>
 
 
 <% @friend_list.each do |f| %>

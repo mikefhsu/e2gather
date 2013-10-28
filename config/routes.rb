@@ -18,6 +18,8 @@ E2gather::Application.routes.draw do
   post 'e2gather/create_user_event' => 'e2gather#create_user_event'
   get 'e2gather/render_ingredient_page' => 'e2gather#render_ingredient_page'
   post 'e2gather/create_ingredient' => 'e2gather#create_ingredient'
+  get 'e2gather/ingredient/:id' => 'e2gather#show_ingredient' 
+  get 'e2gather/ingredient/update/:id' => 'e2gather#update_ingredient' 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

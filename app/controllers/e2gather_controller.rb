@@ -154,30 +154,27 @@ class E2gatherController < ApplicationController
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
     else 
-      respond_to do |format|
-      format.html { render action: 'new' }
-      format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-    end
-end
+      redirect_to "/e2gather/loginFacebook"
+  end
 end
 
-#  def show_ingredients
- #   if session[:user].nil?
- #     puts "Error: no user"
-  #    loginFacebook
- #   end
-  #  ingredientlist = Array.new
-  #  @ingrdients.each do |i|
-   #   if Ingredient.where(user_id: (i["id"])).exists?
-    #    puts i.name
-    #    ingredientlist << i
-    #  else
-     #   puts "No ingredients in the refrigerator!"
-   #   end
-   # end
-  #  return ingredientlist
- # end
+  def show_ingredient
+    @ingredient = Ingredient.find(params[:id])
+  end
+  
+  def update_ingredient
+    @ingredient = Ingredient.find(params[:id])
+    @ingredient.name = params[:name];
+    @ingredient.quantity = params[:quantity]
+    @ingredient.unit = params[:unit]
 
+      if @ingredient.save
+	       redirect_to :action => 'show_ingredient', :id => @ingredient
+      else
+         
+         render :action => 'update_ingredient'
+      end
+  end
 
 
      #respond_to do |format|
@@ -209,5 +206,6 @@ end
     return friend_e2gather
   end
 end
+
 
 	
