@@ -21,7 +21,7 @@ class E2gatherController < ApplicationController
   end
   
   def loginFacebook 
-    if params[:code]
+    if params[:code] and session[:access_token].nil?
       # acknowledge code and get access token from FB
       session[:access_token] = session[:oauth].get_access_token(params[:code])
     end		
@@ -35,7 +35,7 @@ class E2gatherController < ApplicationController
       user = @api.get_object("me")
 
       puts "Get me " + user.to_s()
-			
+     #if session[:user_id].nil?	
       if User.where(user_id: user["id"]).exists?
         @current_user = User.find(user["id"])
       else
@@ -52,18 +52,19 @@ class E2gatherController < ApplicationController
       
       session[:user_id] = @current_user.user_id       
       puts "Check instance var current_user " + session[:user_id]	
-      
+      #end 
+	  puts session[:friend_list].to_s()
+	  if session[:friend_list] ==0 or session[:friend_list]==nil
       @friends = @api.get_connections(user["id"], "friends")
+	  @friend_list =getFriendList 
+	  session[:friend_list] = @friend_list
       puts "Facebook friends: " + @friends.to_s()     
- 
+      end
       @ingredient_list = Ingredient.all
       @event_list = Event.all
-      @friend_list =getFriendList 
-      @friend_list.each do |f|
-        puts f['id']
-      end
+      
 
-      session[:friend_list] = @friend_list
+      
     rescue Exception=>ex
       puts ex.message
     end
@@ -76,48 +77,30 @@ class E2gatherController < ApplicationController
   end
 
   def get_event_list
-    if Event.where(host: @current_user.name).exists?
-      @event_list = Event.find_by_sql("SELECT * FROM events WHERE host = \'" + @current_user.name + "\'" + " ORDER BY events.date_time")
+    if Event.where(host: User.find(session[:user_id]).name).exists?
+      @event_list = Event.find_by_sql("SELECT * FROM events WHERE host = \'" + User.find(session[:user_id]).name + "\'" + " ORDER BY events.date_time")
       puts "Check event list " + @event_list.to_s()
     else
       @event_list = Array.new
     end
   end
 
-  def send_email(to,opts={})
-    opts[:server]      ||= 'smtp.gmail.com'
-    opts[:from]        ||= 'lechangusa@gmail.com'
-    opts[:from_alias]  ||= 'lechangusa@gmail.com'
-    opts[:subject]     ||= "You need to see this"
-    opts[:body]        ||= "Important stuff!"
-
-    msg = <<END_OF_MESSAGE
-From: #{opts[:from_alias]} <#{opts[:from]}>
-To: <#{to}>
-Subject: #{opts[:subject]}
-
-#{opts[:body]}
-END_OF_MESSAGE
-    smtp = Net::SMTP.new 'smtp.gmail.com', 587
-    smtp.enable_tls()
-    smtp.start('smtp.gmail.com','lechangusa@gmail.com', 'fortunegod100%', :login) do |smtp|
-      smtp.send_message msg, opts[:from], 'changle@live.cn'
-    end
-  end
+ 
 
   def sendmail
-     my_email = params['my_email']
-	 name =  params['name']
+  end
+  
+  def sendmsg
+ 
+	my_email = params['my_email']
+	 #name =  params['name']
 	 id =  params['id']
 	 email = User.find(id)['email']
-	 #puts name
-	 #puts email
-	 #puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-     #puts @my_email
+	 name = User.find(id)['name']
 	 UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
      redirect_to action: :loginFacebook
   end
- 
+  
   def render_event_page
     render "e2gather/new_user_event"
   end

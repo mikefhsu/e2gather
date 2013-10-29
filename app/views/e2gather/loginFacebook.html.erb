@@ -14,6 +14,14 @@
 
 <br>
 <br>
+<% @event_list.each do |i| %>
+  <%= i["name"] %> 
+<% end %>
+<br>
+<%= form_tag("render_event_page", method: "get") do %>
+    <div><%= submit_tag "Create New Event" %></div>
+<% end %>
+ 
 <table border="3" cellpadding="10" cellspacing="10">
 <tr>
   <td><b>Friends</b></td>
@@ -26,12 +34,12 @@
   <table border="1" cellpadding="3" cellspacing="3">
     <tr>
       <td><b>Name</b></td>
-      <td><b>ID</b></td>
+      <td><b>Message</b></td>
     </tr>
-    <% @friend_list.each do |f| %>
+    <% session[:friend_list].each do |f| %>
      <tr>
        <td><%= f['name'] %></td>
-       <td><%= f['id']%></td>
+       <td><%= button_to "Send Message", {:controller => "e2gather", :action => "sendmail", :method => :post, :id => f['id'] }%></td>
      </tr>
     <% end %>
   </table>
@@ -65,6 +73,9 @@
 </tr>
 </table>
 
+<!--<% session[:friend_list].each do |f| %>-->
+<!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
+<!--<% end %>-->
 <br>
 <b>Ingredients</b>
 <br>
@@ -76,19 +87,7 @@
   <div><%= submit_tag "Add Ingredient" %></div>
 <% end %>
 
-
-<br>
-<b>Friends</b>
-<br>
-<% @friend_list.each do |f| %>
-  <%= f["name"] %> (<i><%=f["id"] %></i>)
-  <%= form_tag("sendmail", method: "post", ) do %>
-    <%= text_field_tag :my_email %>
-	  <%=hidden_field_tag :name, f["name"] %>
-	  <%=hidden_field_tag :id, f["id"] %>
-    <%= submit_tag "Send Email to " +f["name"] %>
-  <% end %>
-<% end %>
+ 
  
 </ul>
  
