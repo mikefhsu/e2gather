@@ -1,6 +1,6 @@
-  <!--<%=params["id"] %>-->
+<h1>Send Message</h1>
   <%= form_tag("sendMessage", method: "post", ) do %>
-    <%= label_tag "Send a message:" %><br>
+    <%= label_tag "Type the message you wish to send." %><br>
     <%= text_area_tag :my_email, "", rows: 10, cols: 100%><br>
     <%= hidden_field_tag :id, params["id"] %>
     <%= submit_tag "Send Message" %>
