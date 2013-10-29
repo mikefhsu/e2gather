@@ -5,44 +5,41 @@
     <%= form_tag({:controller => "e2gather", :action => "create_user_event"}, :method=>"post") do %>
 
       <b>Name</b>
+      <br> 
       <%= text_field_tag(:name) %>
-      
+      <br> 
+      <br>
       <b>Location</b>
+      <br> 
       <%= text_field_tag(:location) %>
-
+      <br>
+      <br>
       <b>Date and Time</b>
+      <br> 
       <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
-
-      <%= hidden_field :status, :value => 1 %>
-
+      <%= hidden_field :status, :value => "Pending" %>
+      <br>
+      <br>
       <div>
-      <b>Ingredients for this event</b>
+      <b>Guest Ingredients</b>
       <table>
+        <% if !@ingredient_list.nil? %>
+          <% @ingredient_list.zip(@guest_list).each do |ingredient, guest| %>
+            <tr>
+            <td><%= ingredient.name %></td>
+            <td><%= guest.id %></td>
+            <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
+            </tr>
+          <% end %>
+        <% end %>
         <tr>
-          <td><%= label_tag("Add ingredient") %></td>
-          <td><%= text_field_tag(:ingredient)%></td>
+          <td><%= label_tag("Ingredient") %></td>
+          <td><%= text_field_tag(:ingredient)%>
+          <%= submit_tag "Find Guests", :class => "btn btn-large btn-primary" %></td>
         </tr>
       </table>
       </div>
-
-      <div>
-      <b>Guests for this event</b>
-      <table>
-        <tr>
-          <td><%= label_tag("Add guest") %></td>
-          <td><%= text_field_tag(:guest1)%></td>
-        </tr>
-        <tr>
-          <td><%= label_tag("Add guest")%></td>
-          <td><%= text_field_tag(:guest2)%></td>
-        </tr>
-        <tr>
-          <td><%= label_tag("Add guest") %></td>
-          <td><%= text_field_tag(:guest3)%></td>
-        </tr>
-      </table>
-      </div>
-
+      <br>
       <%= submit_tag "Create event", :class => "btn btn-large btn-primary" %>
     <% end %>
   </div>

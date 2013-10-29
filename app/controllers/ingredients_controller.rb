@@ -66,7 +66,9 @@ class IngredientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ingredient
-      @ingredient = Ingredient.find(params[:id])
+      if Ingredient.where(id: params["id"]).exists?
+        @ingredient = Ingredient.find(params[:id])
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
