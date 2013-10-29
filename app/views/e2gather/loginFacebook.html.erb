@@ -4,24 +4,15 @@
 <%= link_to "Logout\n", "/logout" %>
 <hr>
 <ul>
- 
+<!--
 <br>
 <b>Find</b>
 <%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
+-->
 
-<br>
-<br>
-<% @event_list.each do |i| %>
-  <%= i["name"] %> 
-<% end %>
-<br>
-<%= form_tag("render_event_page", method: "get") do %>
-    <div><%= submit_tag "Create New Event" %></div>
-<% end %>
- 
 <table border="3" cellpadding="10" cellspacing="10">
 <tr>
   <td><b>Friends</b></td>
@@ -46,7 +37,14 @@
 </td>
 
 <td>
-  For ingredients
+<% @ingredient_list.each do |i| %>
+  <%= i["name"] %> 
+  <br>
+<% end %>
+<br>
+<%= form_tag("render_ingredient_page", method: "get") do %>
+  <div><%= submit_tag "Add Ingredient" %></div>
+<% end %>
 </td>
 
 <td>
@@ -76,16 +74,6 @@
 <!--<% session[:friend_list].each do |f| %>-->
 <!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
 <!--<% end %>-->
-<br>
-<b>Ingredients</b>
-<br>
-<% @ingredient_list.each do |i| %>
-  <%= i["name"] %> 
-<% end %>
-<br>
-<%= form_tag("render_ingredient_page", method: "get") do %>
-  <div><%= submit_tag "Add Ingredient" %></div>
-<% end %>
 
  
  
