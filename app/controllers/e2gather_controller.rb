@@ -193,7 +193,10 @@ class E2gatherController < ApplicationController
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
     else 
-      redirect_to "/e2gather/loginFacebook"
+      respond_to do |format|
+        format.html { render action: 'create_ingredient' }
+        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+      end
   end
 end
 
