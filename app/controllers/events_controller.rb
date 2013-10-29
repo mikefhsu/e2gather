@@ -23,8 +23,8 @@ class EventsController < ApplicationController
   # GET /events/new
   def new
     @event = Event.new
-    @users = User.find(:all)
-    @ingredients = Ingredient.find(:all)
+    @users = User.all
+    @ingredients = Ingredient.all
   end
 
   # GET /events/1/edit

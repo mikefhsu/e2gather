@@ -4,25 +4,15 @@
 <%= link_to "Logout\n", "/logout" %>
 <hr>
 <ul>
- 
+<!--
 <br>
 <b>Find</b>
 <%= form_tag("ingre", method: "post") do %>
     <div><%= text_field_tag :my_input %></div>
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
+-->
 
-<br>
-<b>Events</b>
-<br>
-<% @event_list.each do |i| %>
-  <%= i["name"] %> 
-<% end %>
-<br>
-<%= form_tag("render_event_page", method: "get") do %>
-    <div><%= submit_tag "Create New Event" %></div>
-<% end %>
- 
 <table border="3" cellpadding="10" cellspacing="10">
 <tr>
   <td><b>Friends</b></td>
@@ -61,6 +51,9 @@
     </tr>
   <% end %>
 </table>
+<%= form_tag("render_ingredient_page", method: "get") do %>
+  <div><%= submit_tag "Add Ingredient" %></div>
+<% end %>
 </td>
 
 <td>
@@ -71,15 +64,18 @@
      <td><b>Time</b></td>
      <td><b>Actions</b></td>
    </tr>
-   <% @event_list.each do |e| %>
-     <tr>
-       <td><%= e.name %></td>
-       <td><%= e.location %></td>
-       <td><%= e.date_time %></td>
-       <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
-     </tr>
-   <% end %>
+    <% @event_list.each do |e| %>
+    <tr>
+      <td><%= e.name %></td>
+      <td><%= e.location %></td>
+      <td><%= e.date_time %></td>
+      <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
+    </tr>
+    <% end %>
   </table>
+  <%= form_tag("render_event_page", method: "get") do %>
+    <div><%= submit_tag "Create New Event" %></div>
+  <% end %>
 </td>
 </tr>
 </table>
@@ -88,12 +84,7 @@
 <!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
 <!--<% end %>-->
 
-<br>
-<b>Ingredients</b>
 
-<%= form_tag("render_ingredient_page", method: "get") do %>
-  <div><%= submit_tag "Add Ingredient" %></div>
-<% end %>
 
  
  

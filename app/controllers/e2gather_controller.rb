@@ -91,14 +91,12 @@ class E2gatherController < ApplicationController
   end
   
   def sendmsg
- 
-	my_email = params['my_email']
-	 #name =  params['name']
-	 id =  params['id']
-	 email = User.find(id)['email']
-	 name = User.find(id)['name']
-	 UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
-     redirect_to action: :loginFacebook
+    my_email = params['my_email']
+    id =  params['id']
+    email = User.find(id)['email']
+	  name = User.find(id)['name']
+	  UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
+    redirect_to action: :loginFacebook
   end
   
   def render_event_page
@@ -126,13 +124,13 @@ class E2gatherController < ApplicationController
     # Status: Pending, Confirmed, Cancelled
     @event.status = "Pending"
      
-    #Set date
+    # Set date and time
     puts "Show params: " + params.to_s()
     date_hash = params[:date_time]
     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
     @event.date_time = date
 
-    #Temporarily collect ingredient and guest in this way
+    # Collect ingredient and guest
     ingredient = params[:ingredient]
     event_ingredient = Ingredient.select("user_id").where(name: ingredient)
     ingredient_list = []
@@ -153,11 +151,10 @@ class E2gatherController < ApplicationController
       end
     end
 
-    puts "ingredient_list " + ingredient_list.to_sentence
-    puts "guest_list " + guest_list.to_sentence
-    @event.ingredient_list = ingredient_list
-    @event.guest_list = guest_list
-    @event.unconfirmed = guest_list
+    # Add ingredient and guest to database
+    @event.ingredient_list = ingredient_list.to_sentence
+    @event.guest_list = guest_list.to_sentence
+    @event.unconfirmed = guest_list.to_sentence
     @event.accept = 0
     @event.reject = 0
  
