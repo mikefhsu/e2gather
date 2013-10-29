@@ -204,18 +204,29 @@ end
     @ingredient = Ingredient.find(params[:id])
   end
   
+  def edit_ingredient
+     @ingredient = Ingredient.find(params[:id])
+  end
+  
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
-    @ingredient.name = params[:name];
-    @ingredient.quantity = params[:quantity]
-    @ingredient.unit = params[:unit]
+    
 
-      if @ingredient.save
-	       redirect_to :action => 'show_ingredient', :id => @ingredient
-      else
-         
-         render :action => 'update_ingredient'
+      if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
+	       render "e2gather/show_ingredient"
+      else 
+        respond_to do |format|       
+        format.html { render action: 'edit_ingredient' }
+        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
       end
+  end
+end
+
+  def delete_ingredient
+    @ingredient = Ingredient.find(params[:id])
+     @ingredient.destroy
+      redirect_to "/e2gather/loginFacebook"
+    
   end
 
 

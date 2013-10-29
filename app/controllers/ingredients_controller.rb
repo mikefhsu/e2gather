@@ -44,7 +44,7 @@ class IngredientsController < ApplicationController
   def update
     respond_to do |format|
       if @ingredient.update(ingredient_params)
-        format.html { redirect_to @ingredient, notice: 'Ingredient was successfully updated.' }
+        format.html { redirect_to 'e2gather/loginFacebook', notice: 'Ingredient was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

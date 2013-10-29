@@ -30,11 +30,7 @@
   <td><b>Events</b></td>
 </tr>
 
-<ul id="ingredients">
-<% @ingredient_list.each do |i| %>
-<li><%= link_to i["name"],{:action => 'show_ingredient', :id => i.id} -%></li> 
-<% end %>
-</ul>
+
 <tr>
 <td>
   <table border="1" cellpadding="3" cellspacing="3">
@@ -51,8 +47,20 @@
   </table>
 </td>
 
+
 <td>
-  For ingredients
+  <table border="1" cellpadding="3" cellspacing="3">
+    <tr>
+      <td><b>Name</b></td>
+      <td><b>Actions</b></td>
+    </tr>
+    <% @ingredient_list.each do |i| %>
+    <tr>
+      <td><%= i.name %> </td>
+      <td><%= link_to "View",{:controller => "e2gather", :action => 'show_ingredient', :id => i.id} %></td> 
+    </tr>
+  <% end %>
+</table>
 </td>
 
 <td>
@@ -82,11 +90,7 @@
 
 <br>
 <b>Ingredients</b>
-<br>
-<% @ingredient_list.each do |i| %>
-  <%= i["name"] %> 
-<% end %>
-<br>
+
 <%= form_tag("render_ingredient_page", method: "get") do %>
   <div><%= submit_tag "Add Ingredient" %></div>
 <% end %>

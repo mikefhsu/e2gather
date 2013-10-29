@@ -1,0 +1,21 @@
+<h1>Edit Ingredient Detail</h1>
+<%= form_for @ingredient, :url => {:controller => "e2gather", :action => "edit_ingredient"} do |i| %>
+  <p>
+    <%= i.label :name %><br />
+    <%= i.text_field :name %>
+  </p>
+  <p>
+    <%= i.label :quantity %><br />
+    <%= i.text_field :quantity %>
+  </p>
+  <p>
+    <%= i.label :unit %><br />
+    <%= i.text_field :unit %>
+  </p>
+  <p>
+  	<%= i.submit "Save changes" %>
+  </p>
+
+<% end %>
+<%= link_to 'Back', {:action => 'show_ingredient'} %>
+
