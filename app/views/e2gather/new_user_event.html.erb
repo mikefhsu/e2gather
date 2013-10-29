@@ -23,19 +23,10 @@
       <div>
       <b>Guest Ingredients</b>
       <table>
-        <% if !@ingredient_list.nil? %>
-          <% @ingredient_list.zip(@guest_list).each do |ingredient, guest| %>
-            <tr>
-            <td><%= ingredient.name %></td>
-            <td><%= guest.id %></td>
-            <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
-            </tr>
-          <% end %>
-        <% end %>
         <tr>
           <td><%= label_tag("Ingredient") %></td>
           <td><%= text_field_tag(:ingredient)%>
-          <%= submit_tag "Find Guests", :class => "btn btn-large btn-primary" %></td>
+          <%= submit_tag "Find Guests" %></td>
         </tr>
       </table>
       </div>
