@@ -56,7 +56,7 @@ class EventsController < ApplicationController
         end
       else
         flash.now[:alert] = "Not every guest has responded!"
-        render_to "/e2gather/loginFacebook"
+        render_to "e2gather/loginFacebook"
         return
       end
     else
