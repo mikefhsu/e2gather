@@ -1,5 +1,6 @@
 #require 'net/smtp'
 #require 'tlsmail'
+require 'yaml'
 class E2gatherController < ApplicationController
   #@db_info
   #@db_fetch_result
@@ -101,6 +102,27 @@ class E2gatherController < ApplicationController
     redirect_to action: :loginFacebook
   end
   
+  def invite_guest
+   @current_event = Event.find(params[:e_id])
+   @event_ingredient =YAML::load( @current_event.ingredient_list)
+   guest_list = ""
+
+   @event_ingredient.each {|tmp|
+     guest_list = guest_list + User.find(params[tmp.name]).name + ","
+   }
+   puts  guest_list   +"00000000000000000000000000000000000000"
+   puts  guest_list[0...-1]  +"111111111111111111111111111111111111111111111111111"
+   puts guest_list[0...-2]  +"22222222222222222222222222222222222222222222222222"
+   guest_list = guest_list[0...-1]
+   @current_event.guest_list = guest_list
+  # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+   if @current_event.save
+     redirect_to "/e2gather/loginFacebook"
+   else
+     render "e2gather/error_page"
+   end
+  end
+  
   def render_event_page
     @ing_list=[]
 	@guest_list =''
@@ -109,34 +131,36 @@ class E2gatherController < ApplicationController
     render "e2gather/new_user_event"
   end
   
-  
   def pick_guest_page
-    
 	@current_event = Event.find(params[:e_id])
+	@event_ingredient =YAML::load( @current_event.ingredient_list)
 	
-	    event_ingredient = @current_event.ingredient_list
-    #ingredient_list = []
-    #guest_list = [] 
-    #event_ingredient.each do |i|
-    #  if session[:friend_list].nil? 
-    #    puts "session[:friend_list] is nil"
-    #  else
-    #    session[:friend_list].each do |f|
-    #      if f["id"] == i["user_id"]
-    #        puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
-    #        ingredient_list << ingredient
-    #        guest_list << f["id"]
-    #      else 
-    #        puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
-	#		puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-    #      end
-    #    end
-    #  end
-    # end
-	#@guest_list1  << ["kkk", "3"]
-   # guest_list1 = params[:g1]
-   
-  
+	@total_ingred_list = Hash.new
+	
+	@event_ingredient.each {|tmp|
+	  user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
+      guest_list = [] 
+      user_ingred.each{|i|
+        if session[:friend_list].nil? 
+          puts "session[:friend_list] is nil"
+		  redirect_to "/e2gather/loginFacebook"
+		  return
+        else
+          session[:friend_list].each{|f|
+            if f["id"] == i["user_id"]
+              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
+              guest_list <<[ User.find(f["id"]).name , f["id"]]
+            else 
+              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
+            end
+          }
+        end
+		
+		@total_ingred_list[tmp.name] = guest_list
+		puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
+	   }
+	   
+	}
     #redirect_to "/e2gather/loginFacebook"
   end
   
@@ -169,14 +193,14 @@ class E2gatherController < ApplicationController
 
     # Collect ingredient and guest
 	ingredient_list =[]
-     ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> 0,  :unit=>0, :user_id=> 0)
-      ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> 0,  :unit=>0, :user_id=> 0)
- ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> 0,  :unit=>0, :user_id=> 0)
- ingredient_list << Ingredient.new( :name=>  params[:ingredient4], :ingredient_id =>0, :quantity=> 0,  :unit=>0, :user_id=> 0)
+    ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
+    ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
+    ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
+    #ingredient_list << Ingredient.new( :name=>  params[:ingredient4], :ingredient_id =>0, :quantity=> params[:q4],  :unit=>0, :user_id=> 0)
 
 
     # Add ingredient and guest to database
-    @event.ingredient_list = ingredient_list#.to_sentence
+    @event.ingredient_list = ingredient_list
     #@event.guest_list = guest_list.to_sentence
     #@event.unconfirmed = guest_list.to_sentence
     @event.accept = 0
