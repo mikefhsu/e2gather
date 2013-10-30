@@ -60,7 +60,7 @@ class E2gatherController < ApplicationController
 	  session[:friend_list] = @friend_list
       puts "Facebook friends: " + @friends.to_s()     
       end
-      @ingredient_list = Ingredient.all
+      @ingredient_list = Ingredient.where(user_id: user["id"])
       @event_list = Event.all
       
 
@@ -224,6 +224,7 @@ end
 
   def delete_ingredient
     @ingredient = Ingredient.find(params[:id])
+
      @ingredient.destroy
       redirect_to "/e2gather/loginFacebook"
     
