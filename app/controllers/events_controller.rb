@@ -1,3 +1,4 @@
+require 'yaml'
 class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update, :destroy]
   
@@ -17,6 +18,19 @@ class EventsController < ApplicationController
     puts "Check params in view_event_page " + params.to_s 
     @current_event = Event.find(params[:e_id])
     @current_user = User.find(session[:user_id])
+    
+    ingred_obj_list = YAML::load(@current_event.ingredient_list)
+    @raw_ingreds = ""
+    ingred_obj_list.each {|tmp|
+      @raw_ingreds = @raw_ingreds + tmp.name + ","
+    }
+    
+    @raw_ingreds = @raw_ingreds[0...-1]
+
+    if (@current_event.status != "Pending")
+      render "events/view_final_event"
+      return
+    end
 
     if (@current_event.host == @current_user.name)
       render "events/view_host_event"

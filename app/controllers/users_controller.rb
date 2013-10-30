@@ -74,7 +74,7 @@ class UsersController < ApplicationController
       ret = ret + tmp + ","
     }
     #Remove last ,
-    ret = ret[0...-2]
+    ret = ret[0...-1]
     return ret
   end
 
