@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-
   # GET /users
   # GET /users.json
   def index
@@ -61,8 +60,25 @@ class UsersController < ApplicationController
     end
   end
 
-  def update_invitation
+  def compose_guest_list(guest_list)
+    if guest_list.length == 0
+      return ""
+    end
 
+    if guest_list.length == 1
+      return guest_list[0]
+    end
+    
+    ret = ""
+    guest_list.each {|tmp|
+      ret = ret + tmp + ","
+    }
+    #Remove last ,
+    ret = ret[0...-2]
+    return ret
+  end
+
+  def update_invitation
     puts "Check params " + params.to_s
 
     if Event.where(id: params[:e_id]).exists?
@@ -74,32 +90,49 @@ class UsersController < ApplicationController
         return
       end
 
-      guest_list = @current_event.guest_list.split(",")
-     
-      guest_list.each {|tmp|
-        if tmp == @current_user.name
+      unconfirmed = @current_event.unconfirmed.split(",")
+      u_idx = unconfirmed.index(@current_user.name)
 
-          if params[:option] == 1
-            @current_event.accept += 1
-          else
-            @current_event.reject += 1
-          end
-
-          guest_list.delete(tmp)
-          break
+      if !u_idx.nil?
+        if params[:option] == "1"
+          @current_event.accept += 1
+        else
+          @current_event.reject += 1
+          
+          #Remove reject guest
+          guest_list = @current_event.guest_list.split(",")
+          g_idx = guest_list.index(@current_user.name)
+          
+          #g_idx should not be nil actually
+          guest_list.delete_at(g_idx)
+          puts "After deletion: " + guest_list.to_s
+          @current_event.guest_list = compose_guest_list(guest_list)
         end
-      }
+        
+        #Update unconfirmed list
+        unconfirmed.delete_at(u_idx)
+        @current_event.unconfirmed = compose_guest_list(unconfirmed)
+      end
 
-      new_guest_list = ""
-      guest_list.each {|tmp|
-        new_guest_list = new_guest_list + tmp
-      }
-
-      @current_event.guest_list = new_guest_list
-      puts "New accept " + @current_event.accept.to_s
-      puts "New guest_list " + @current_event.guest_list.to_s
-      
+      puts "Update accept " + @current_event.accept.to_s
+      puts "Update reject " + @current_event.reject.to_s
+      puts "Update unconfirmed " + @current_event.unconfirmed.to_s
+      puts "Update guest_list " + @current_event.guest_list.to_s
+            
       if @current_event.save
+        #Send message to host
+        host_user = User.find_by name: @current_event.host
+        
+        if params[:option] == "1"
+          @current_event.notify_host(host_user, @current_user.name, 1)
+        else
+          @current_event.notify_host(host_user, @current_user.name, 0)
+        end
+
+        if @current_event.unconfirmed.length == 0
+          @current_event.notify_host(host_user, nil, 2)
+        end  
+        
         redirect_to "/e2gather/loginFacebook"
         return
       end

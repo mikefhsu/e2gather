@@ -60,11 +60,8 @@ class E2gatherController < ApplicationController
 	  session[:friend_list] = @friend_list
       puts "Facebook friends: " + @friends.to_s()     
       end
-      @ingredient_list = Ingredient.where(user_id: user["id"])
-      @event_list = Event.all
-      
-
-      
+      #@event_list = Event.all 
+      @ingredient_list = Ingredient.where(user_id: user["id"])  
     rescue Exception=>ex
       puts ex.message
     end
@@ -77,17 +74,20 @@ class E2gatherController < ApplicationController
   end
 
   def get_event_list
-    if Event.where(host: User.find(session[:user_id]).name).exists?
-      @event_list = Event.find_by_sql("SELECT * FROM events WHERE host = \'" + User.find(session[:user_id]).name + "\'" + " ORDER BY events.date_time")
-      puts "Check event list " + @event_list.to_s()
-    else
+    if session[:user_id].nil?
+      loginFacebook
+      return
+    end
+    
+    user_name = User.find(session[:user_id]).name
+    all_list = Event.find_by_sql("SELECT * FROM events ORDER By events.date_time")
+    @event_list = all_list.select{|tmp| tmp.host == user_name || tmp.guest_list.split(",").include?(user_name)}
+    
+    if @event_list.nil?
       @event_list = Array.new
     end
-  end
-
- 
-
-  def sendmail
+    
+    puts "Check events: " + @event_list.to_s
   end
   
   def sendmsg
@@ -197,8 +197,8 @@ class E2gatherController < ApplicationController
         format.html { render action: 'create_ingredient' }
         format.json { render json: @ingredient.errors, status: :unprocessable_entity }
       end
+    end
   end
-end
 
   def show_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -211,7 +211,6 @@ end
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
     
-
       if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
 	       render "e2gather/show_ingredient"
       else 
@@ -219,8 +218,8 @@ end
         format.html { render action: 'edit_ingredient' }
         format.json { render json: @ingredient.errors, status: :unprocessable_entity }
       end
+    end
   end
-end
 
   def delete_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -230,28 +229,6 @@ end
     
   end
 
-
-     #respond_to do |format|
-     # if @event.save
-     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
-     #   format.json { render action: 'show', status: :created, location: @event }
-     #   redirect_to "e2gather/loginFacebook"
-     # else
-     #   format.html { render action: 'new' }
-     #   format.json { render json: @event.errors, status: :unprocessable_entity }
-     # end
-     #end
-  #    respond_to do |format|
-   #     format.html { render action: 'new' }
-   #     format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-  #    end
-  #  end
- # end
-	
-  def sendInvitation
-	  # send message
-  end
-  
   def errorpage
     render "e2gather/error_page"
   end
@@ -262,14 +239,8 @@ end
       if User.where(user_id: (f["id"])).exists?
         puts "find friend !"
         friend_e2gather << f
-      else
-        puts "attempt to invite friends joining e2gather"
-        #@api.put_wall_post("Test123", {}, f["id"], {});
       end
     end
     return friend_e2gather
   end
-end
-
-
-	
+end	
