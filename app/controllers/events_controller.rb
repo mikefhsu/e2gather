@@ -1,6 +1,6 @@
 class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update, :destroy]
-
+  
   # GET /events
   # GET /events.json
   def index
@@ -16,8 +16,55 @@ class EventsController < ApplicationController
   def view_event_page
     puts "Check params in view_event_page " + params.to_s 
     @current_event = Event.find(params[:e_id])
-    render "events/view_event"
-    return
+    @current_user = User.find(session[:user_id])
+
+    if (@current_event.host == @current_user.name)
+      render "events/view_host_event"
+      return
+    else
+      render "events/view_event"
+      return
+    end
+  end
+
+  def finalized
+    puts "Check params in finalized " + params.to_s
+    @current_event = Event.find(params[:e_id])
+    @current_user = User.find(session[:user_id])
+
+    if (@current_event.host != @current_user.name)
+      redirect_to "/e2gather/errorpage"
+      return
+    end
+
+    guest_list = @current_event.guest_list.split(",")
+    guest_objs = Array.new
+    guest_list.each {|tmp|
+      guest_objs << User.find_by(name: tmp)
+    } 
+    
+    if (params[:option] == "1") 
+      puts "Check guest obj: " + guest_objs.to_s
+      if @current_event.unconfirmed.length == 0
+        @current_event.status = "Confirmed"
+        if @current_event.save
+          @current_event.notify_guests(guest_objs, 1)
+          flash[:event_msg] = "Event confirmed: " + @current_event.name + "!!"
+          render "events/event_finalized"
+        else
+          render "e2gather/error_page"
+        end
+      else
+        flash.now[:alert] = "Not every guest has responded!"
+        render_to "/e2gather/loginFacebook"
+        return
+      end
+    else
+      @current_event.status = "Cancelled"
+      @current_event.notify_guests(guest_objs, 0)
+      flash[:event_msg] = "Event canceled: " + @current_event.name + "..."
+      render "events/event_finalized"
+    end
   end
 
   # GET /events/new
