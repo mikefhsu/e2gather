@@ -3,16 +3,12 @@
 
 <table>
   <tr>
-    <td><b>Host</b></td>
-    <td><%= @current_event.host %></td>
-  </tr>
-  <tr>
     <td><b>Guests</b></td>
     <td><%= @current_event.guest_list %></td>
   </tr>
   <tr>
     <td><b>Ingredients</b></td>
-    <td><%= @current_event.ingredient_list  %></td>
+    <td><%= @current_event.ingredient_list %></td>
   </tr>
   <tr>
     <td><b>Time</b></td>
@@ -40,17 +36,17 @@
       <% end %>
     </td>
     <td>
-      <%= form_tag({:controller => "users", :action => "update_invitation"}, :method=>"post") do %>
+      <%= form_tag({:controller => "events", :action => "finalized"}, :method=>"post") do %>
       <%= hidden_field_tag "e_id", @current_event.id %>
       <%= hidden_field_tag "option", 1 %>
-      <%= submit_tag "Accept Invition", :class => "btn btn-large btn-primary" %>
+      <%= submit_tag "Confirm Event", :class => "btn btn-large btn-primary" %>
       <% end %>
     </td>
     <td>
-      <%= form_tag({:controller => "users", :action => "update_invitation"}, :method=>"post") do %>
+      <%= form_tag({:controller => "events", :action => "finalized"}, :method=>"post") do %>
       <%= hidden_field_tag "e_id", @current_event.id %>
       <%= hidden_field_tag "option", 0 %>
-      <%= submit_tag "Reject Invition", :class => "btn btn-large btn-primary" %>
+      <%= submit_tag "Cancel Event", :class => "btn btn-large btn-primary" %>
       <% end %>
     </td>
   </tr>

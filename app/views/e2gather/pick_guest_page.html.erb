@@ -1,0 +1,13 @@
+ <div id= "gues1">
+<% @current_event[:ingredient_list].each do |e| %>
+    <tr>
+      <td><%= e.name %></td>
+      <td><%= e.location %></td>
+      <td><%= e.date_time %></td>
+	  <td><%= select_tag(:guest+e.ingredient_id, options_for_select()) %> <td>
+      <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
+	  <td><%= link_to "Pick Guests", {:controller => "events", :action => "pick_guest_page", :e_id => e.id }%></td>
+    </tr>
+    <% end %>
+ 
+ </div>

@@ -69,8 +69,8 @@
       <td><%= e.name %></td>
       <td><%= e.location %></td>
       <td><%= e.date_time %></td>
-      <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%></td>
-	  <td><%= link_to "Pick Guests", {:controller => "e2gather", :action => "pick_guest_page", :e_id => e.id }%></td>
+      <td><%= link_to "Check", {:controller => "events", :action => "view_event_page", :e_id => e.id }%> 
+	   <%= link_to "Pick Guests", {:controller => "e2gather", :action => "pick_guest_page", :e_id => e.id }%></td>
     </tr>
     <% end %>
   </table>
@@ -84,10 +84,5 @@
 <!--<% session[:friend_list].each do |f| %>-->
 <!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
 <!--<% end %>-->
-
-
-
- 
- 
 </ul>
  

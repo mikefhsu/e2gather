@@ -1,0 +1,5 @@
+<% provide(:title, flash[:event_msg]) %>
+<b><%= flash[:event_msg] %></b>
+<%= form_tag({:controller => "e2gather", :action => "loginFacebook"}, :method=>"get") do %>
+<%= submit_tag "Home", :class => "btn btn-large btn-primary" %>
+<% end %>

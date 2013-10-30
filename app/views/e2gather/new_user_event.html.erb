@@ -21,18 +21,29 @@
       <br>
       <br>
       <div>
-      <b>Guest Ingredients</b>
+      <b>Ingredients</b>
       <table>
         <tr>
-          <td><%= label_tag("Ingredient") %></td>
-          <td><%= text_field_tag(:ingredient)%>
-          <%= submit_tag "Find Guests" %></td>
+		<td><%= text_field_tag(:ingredient1)%>
+		    <td><%= label_tag("Ingredients") %> </td>
+					<td><%= text_field_tag(:ingredient2)%>
+		    <td><%= label_tag("Ingredients") %> </td>
+					<td><%= text_field_tag(:ingredient3)%>
+		    <td><%= label_tag("Ingredients") %> </td>
+					<td><%= text_field_tag(:ingredient4)%>
+		    <td><%= label_tag("Ingredients") %> </td>
         </tr>
       </table>
       </div>
       <br>
       <%= submit_tag "Create event", :class => "btn btn-large btn-primary" %>
     <% end %>
+	
+	         
+		  
+
+ 
+ 
   </div>
 </div>
 
