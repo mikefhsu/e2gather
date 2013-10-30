@@ -33,7 +33,7 @@ class E2gatherController < ApplicationController
     begin
       @graph_data = @api.get_object("/me/statuses", "fields"=>"message")
       user = @api.get_object("me")
-
+  
       puts "Get me " + user.to_s()
      #if session[:user_id].nil?	
       if User.where(user_id: user["id"]).exists?
@@ -62,7 +62,9 @@ class E2gatherController < ApplicationController
       end
       @ingredient_list = Ingredient.all
       @event_list = Event.all
-      
+	  puts "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"
+	  puts @ingredient_list.to_s() + "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"
+      puts "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"
 
       
     rescue Exception=>ex
@@ -100,7 +102,42 @@ class E2gatherController < ApplicationController
   end
   
   def render_event_page
+    @ing_list=[]
+	@guest_list =''
+	@guest_list << 'a'
+	@guest_list1 = ["Dollar", "1"], ["Kroner", "2"]
     render "e2gather/new_user_event"
+  end
+  
+  
+  def pick_guest_page
+    
+	@current_event = Event.find(params[:e_id])
+	
+	    event_ingredient = @current_event.ingredient_list
+    #ingredient_list = []
+    #guest_list = [] 
+    #event_ingredient.each do |i|
+    #  if session[:friend_list].nil? 
+    #    puts "session[:friend_list] is nil"
+    #  else
+    #    session[:friend_list].each do |f|
+    #      if f["id"] == i["user_id"]
+    #        puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
+    #        ingredient_list << ingredient
+    #        guest_list << f["id"]
+    #      else 
+    #        puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
+	#		puts "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+    #      end
+    #    end
+    #  end
+    # end
+	#@guest_list1  << ["kkk", "3"]
+   # guest_list1 = params[:g1]
+   
+  
+    #redirect_to "/e2gather/loginFacebook"
   end
   
   def create_user_event
@@ -111,14 +148,14 @@ class E2gatherController < ApplicationController
      puts "No current user"
      loginFacebook
     end
- 
+    
     @current_user = User.find(session[:user_id])
     puts "Current user " + @current_user.name
     @event = Event.new
     @event.host = @current_user.name
     @event.name = params[:name]
     @event.location = params[:location]
-    
+    #puts 'mymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyu' + params[:guest]
     # Generate event id for event
     @event.event_id = Time.now.to_i 
     # Status: Pending, Confirmed, Cancelled
@@ -131,30 +168,17 @@ class E2gatherController < ApplicationController
     @event.date_time = date
 
     # Collect ingredient and guest
-    ingredient = params[:ingredient]
-    event_ingredient = Ingredient.select("user_id").where(name: ingredient)
-    ingredient_list = []
-    guest_list = [] 
-    event_ingredient.each do |i|
-      if session[:friend_list].nil? 
-        puts "session[:friend_list] is nil"
-      else
-        session[:friend_list].each do |f|
-          if f["id"] == i["user_id"]
-            puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
-            ingredient_list << ingredient
-            guest_list << f["id"]
-          else 
-            puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
-          end
-        end
-      end
-    end
+	ingredient_list =[]
+     ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>Time.now.to_i, :quantity=> 0,  :unit=>0, :user_id=> 0)
+      ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>Time.now.to_i, :quantity=> 0,  :unit=>0, :user_id=> 0)
+ ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>Time.now.to_i, :quantity=> 0,  :unit=>0, :user_id=> 0)
+ ingredient_list << Ingredient.new( :name=>  params[:ingredient4], :ingredient_id =>Time.now.to_i, :quantity=> 0,  :unit=>0, :user_id=> 0)
+
 
     # Add ingredient and guest to database
-    @event.ingredient_list = ingredient_list.to_sentence
-    @event.guest_list = guest_list.to_sentence
-    @event.unconfirmed = guest_list.to_sentence
+    @event.ingredient_list = ingredient_list#.to_sentence
+    #@event.guest_list = guest_list.to_sentence
+    #@event.unconfirmed = guest_list.to_sentence
     @event.accept = 0
     @event.reject = 0
  
