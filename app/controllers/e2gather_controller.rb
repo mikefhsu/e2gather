@@ -60,8 +60,8 @@ class E2gatherController < ApplicationController
 	  session[:friend_list] = @friend_list
       puts "Facebook friends: " + @friends.to_s()     
       end
-      @ingredient_list = Ingredient.all
       #@event_list = Event.all 
+      @ingredient_list = Ingredient.where(user_id: user["id"])  
     rescue Exception=>ex
       puts ex.message
     end
@@ -88,9 +88,6 @@ class E2gatherController < ApplicationController
     end
     
     puts "Check events: " + @event_list.to_s
-  end
-
-  def sendmail
   end
   
   def sendmsg
@@ -196,7 +193,10 @@ class E2gatherController < ApplicationController
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
     else 
-      redirect_to "/e2gather/loginFacebook"
+      respond_to do |format|
+        format.html { render action: 'create_ingredient' }
+        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -211,7 +211,6 @@ class E2gatherController < ApplicationController
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
     
-
       if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
 	       render "e2gather/show_ingredient"
       else 
@@ -224,15 +223,12 @@ class E2gatherController < ApplicationController
 
   def delete_ingredient
     @ingredient = Ingredient.find(params[:id])
+
      @ingredient.destroy
       redirect_to "/e2gather/loginFacebook"
     
   end
-	
-  def sendInvitation
-	  # send message
-  end
-  
+
   def errorpage
     render "e2gather/error_page"
   end
@@ -247,7 +243,4 @@ class E2gatherController < ApplicationController
     end
     return friend_e2gather
   end
-end
-
-
-	
+end	

@@ -61,9 +61,13 @@ class EventsController < ApplicationController
       end
     else
       @current_event.status = "Cancelled"
-      @current_event.notify_guests(guest_objs, 0)
-      flash[:event_msg] = "Event canceled: " + @current_event.name + "..."
-      render "events/event_finalized"
+      if @current_event.save
+        @current_event.notify_guests(guest_objs, 0)
+        flash[:event_msg] = "Event canceled: " + @current_event.name + "..."
+        render "events/event_finalized"
+      else
+        render "e2gather/error_page"
+      end
     end
   end
 
