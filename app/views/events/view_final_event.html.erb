@@ -1,0 +1,37 @@
+<% provide(:title, "Check Event") %>
+<h1>View Event: <%= @current_event.name %></h1>
+
+<table>
+  <tr>
+    <td><b>Host: </b></td>
+    <td><%= @current_event.host %></td>
+  </tr>
+  <tr>
+    <td><b>Guests: </b></td>
+    <td><%= @current_event.guest_list %></td>
+  </tr>
+  <tr>
+    <td><b>Ingredients: </b></td>
+    <td><%= @raw_ingreds  %></td>
+  </tr>
+  <tr>
+    <td><b>Time: </b></td>
+    <td><%= @current_event.date_time %></td>
+  </tr>
+  <tr>
+    <td><b>Accept: </b></td>
+    <td><%= @current_event.accept%></td>
+  </td>
+  <tr>
+    <td><b>Reject: </b></td>
+    <td><%= @current_event.reject%></td>
+  </tr>
+  <tr>
+    <td><b>Unconfirmed: </b></td>
+    <td><%= @current_event.unconfirmed%></td>
+  </tr>
+  <tr>
+    <td><b>Status: </b></td>
+    <td><%= @current_event.status%></td>
+  </tr>
+</table>

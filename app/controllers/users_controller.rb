@@ -74,8 +74,18 @@ class UsersController < ApplicationController
       ret = ret + tmp + ","
     }
     #Remove last ,
-    ret = ret[0...-2]
+    ret = ret[0...-1]
     return ret
+  end
+  
+  def find_matched_ingreds(ingred_objs, user_id)
+    indx = -1
+    ingred_objs.each {|tmp|
+      if tmp.user_id = user_id
+        indx = ingred_objs.index(tmp)
+        return indx
+      end
+    }
   end
 
   def update_invitation
@@ -102,11 +112,18 @@ class UsersController < ApplicationController
           #Remove reject guest
           guest_list = @current_event.guest_list.split(",")
           g_idx = guest_list.index(@current_user.name)
+
+          #Remove matched ingredient
+          ingred_list = @current_event.ingredient_list
+          i_idx = find_matched_ingreds(ingred_list, @current_user.user_id)
           
           #g_idx should not be nil actually
           guest_list.delete_at(g_idx)
-          puts "After deletion: " + guest_list.to_s
+          ingred_list.delete_at(i_idx)
+          puts "After deletion guest: " + guest_list.to_s
+          puts "After deletion ingredients: " + ingred_list.to_s
           @current_event.guest_list = compose_guest_list(guest_list)
+          @current_event.ingredient_List = ingred_list
         end
         
         #Update unconfirmed list

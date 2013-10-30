@@ -1,0 +1,12 @@
+ <div id= "gues1">
+ <%= form_tag({:controller => "e2gather", :action => "invite_guest"}, :method=>"post") do %>
+<% @event_ingredient.each do |i| %>
+    <tr>
+      <td><%= i.name %></td>
+	  <td><%= select_tag(i.name, options_for_select(@total_ingred_list[i.name])) %> <td>
+    </tr>
+    <% end %>
+	<%= hidden_field_tag "e_id",@current_event.id %>
+ <%= submit_tag "Invite guest", :class => "btn btn-large btn-primary" %>
+    <% end %>
+ </div>

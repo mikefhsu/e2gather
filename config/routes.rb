@@ -21,7 +21,9 @@ E2gather::Application.routes.draw do
   post 'e2gather/sendMessage' => 'e2gather#sendmsg'
   get 'e2gather/render_event_page' => 'e2gather#render_event_page'
   post 'e2gather/create_user_event' => 'e2gather#create_user_event'
-
+  post 'e2gather/invite_guest' =>'e2gather#invite_guest'
+  get 'e2gather/pick_guest_page/:e_id' =>'e2gather#pick_guest_page'
+ 
   get 'e2gather/render_ingredient_page' => 'e2gather#render_ingredient_page'
   post 'e2gather/create_ingredient' => 'e2gather#create_ingredient'
   get 'e2gather/show_ingredient/:id' => 'e2gather#show_ingredient' 

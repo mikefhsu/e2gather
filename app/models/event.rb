@@ -21,14 +21,14 @@ class Event < ActiveRecord::Base
     UserMailer.update_email(host, guest_name, self.name, mail_body).deliver
   end
 
-  def notify_guests(guest_list, flag)
+  def notify_guests(guest_list, raw_ingreds, lag)
     final_flag = -1;
     if flag == 1
       mail_body = self.name + 
         " event has been confirmed!! \n" +
         "Location: " + self.location + "\n" +
         "Guests: " + self.guest_list + "\n" +
-        "Ingredients: " + self.ingredient_list + "\n"
+        "Ingredients: " + raw_ingreds + "\n"
         "Look forward to meeting you!!!\n" +
         "Your friend --" + self.host
         final_flag = 1
