@@ -52,14 +52,13 @@ class E2gatherController < ApplicationController
       end 
       
       session[:user_id] = @current_user.user_id       
-      puts "Check instance var current_user " + session[:user_id]	
-      #end 
-	  puts session[:friend_list].to_s()
-	  if session[:friend_list] ==0 or session[:friend_list]==nil
-      @friends = @api.get_connections(user["id"], "friends")
-	  @friend_list =getFriendList 
-	  session[:friend_list] = @friend_list
-      puts "Facebook friends: " + @friends.to_s()     
+      puts "Check instance var current_user " + session[:user_id]	 
+      puts session[:friend_list].to_s()
+      if session[:friend_list] ==0 or session[:friend_list]==nil
+        @friends = @api.get_connections(user["id"], "friends")
+	@friend_list =getFriendList 
+	session[:friend_list] = @friend_list
+        puts "Facebook friends: " + @friends.to_s()     
       end
  
       #@event_list = Event.all 
@@ -110,9 +109,6 @@ class E2gatherController < ApplicationController
    @event_ingredient.each {|tmp|
      guest_list = guest_list + User.find(params[tmp.name]).name + ","
    }
-   puts guest_list   +"00000000000000000000000000000000000000"
-   puts guest_list[0...-1]  +"111111111111111111111111111111111111111111111111111"
-   puts guest_list[0...-2]  +"22222222222222222222222222222222222222222222222222"
    guest_list = guest_list[0...-1]
    @current_event.guest_list = guest_list
    @current_event.unconfirmed = guest_list
@@ -123,15 +119,11 @@ class E2gatherController < ApplicationController
      render "e2gather/error_page"
    end
   end
-  
+
   def render_event_page
-    @ing_list=[]
-    @guest_list =''
-    @guest_list << 'a'
-    @guest_list1 = ["Dollar", "1"], ["Kroner", "2"]
     render "e2gather/new_user_event"
   end
-  
+ 
   def pick_guest_page
     @current_event = Event.find(params[:e_id])
     @event_ingredient =YAML::load( @current_event.ingredient_list)
@@ -178,8 +170,6 @@ class E2gatherController < ApplicationController
     @event.host = @current_user.name
     @event.name = params[:name]
     @event.location = params[:location]
-    #puts 'mymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyu' + params[:guest]
-    # Generate event id for event
     @event.event_id = Time.now.to_i 
     # Status: Pending, Confirmed, Cancelled
     @event.status = "Pending"
@@ -191,7 +181,7 @@ class E2gatherController < ApplicationController
     @event.date_time = date
 
     # Collect ingredient and guest
-	ingredient_list =[]
+    ingredient_list =[]
     ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
     ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
     ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
