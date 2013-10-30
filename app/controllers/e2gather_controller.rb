@@ -82,10 +82,10 @@ class E2gatherController < ApplicationController
       return
     end
     
-    user_name = User.find(session[:user_id]).name
+    @user_name = User.find(session[:user_id]).name
     all_list = Event.find_by_sql("SELECT * FROM events ORDER By events.date_time")
-    @event_list = all_list.select{|tmp| tmp.host == user_name || tmp.guest_list.split(",").include?(user_name)}
-    
+    @event_list = all_list.select{|tmp| tmp.host == @user_name || tmp.guest_list.split(",").include?(@user_name)}
+    #@host_id = User.find(@event_list[1].)
     if @event_list.nil?
       @event_list = Array.new
     end
@@ -98,7 +98,7 @@ class E2gatherController < ApplicationController
     id =  params['id']
     email = User.find(id)['email']
 	  name = User.find(id)['name']
-	  UserMailer.welcome_email(session[:user] ,email,name, my_email).deliver
+	  UserMailer.welcome_email(session[:user_id] ,email,name, my_email).deliver
     redirect_to action: :loginFacebook
   end
   
@@ -106,17 +106,38 @@ class E2gatherController < ApplicationController
    @current_event = Event.find(params[:e_id])
    @event_ingredient =YAML::load( @current_event.ingredient_list)
    guest_list = ""
-
+   email_list =[]
    @event_ingredient.each {|tmp|
      guest_list = guest_list + User.find(params[tmp.name]).name + ","
+	 tmp.user_id = params[tmp.name]
+	 puts "tmp.id:" +tmp.name
+	 #tmp.quantity = params[tmp.quantity]
+	 puts "tmp.quantity:" +tmp.quantity.to_s()
+	# puts temp.to_s()
+	 #user_list << User.find(params[tmp.name]) 
    }
    puts  guest_list   +"00000000000000000000000000000000000000"
    puts  guest_list[0...-1]  +"111111111111111111111111111111111111111111111111111"
    puts guest_list[0...-2]  +"22222222222222222222222222222222222222222222222222"
    guest_list = guest_list[0...-1]
    @current_event.guest_list = guest_list
+   @current_event.ingredient_list = @event_ingredient
   # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+  
    if @current_event.save
+   
+
+
+	 @event_ingredient.each {|tmp|
+#	 puts "user name:" +User.find(session[:user_id]).name
+#puts "invitee email:" +User.find(tmp.user_id).email
+#puts "invitee name:" +User.find(tmp.user_id).name
+#puts "ingre quantity:" + tmp.quantity
+#puts "ingre name:" +tmp.name
+#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+  
+	 UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
+   }
      redirect_to "/e2gather/loginFacebook"
    else
      render "e2gather/error_page"
