@@ -88,11 +88,6 @@ class E2gatherController < ApplicationController
       @event_list = Array.new
     end
   end
-
- 
-
-  def sendmail
-  end
   
   def sendmsg
     my_email = params['my_email']
@@ -109,6 +104,10 @@ class E2gatherController < ApplicationController
    guest_list = ""
    email_list =[]
    @event_ingredient.each {|tmp|
+     if params[tmp.name].nil?
+       render "e2gather/error_page"
+       return
+     end
      guest_list = guest_list + User.find(params[tmp.name]).name + ","
 	 tmp.user_id = params[tmp.name]
 	 puts "tmp.id:" +tmp.name
@@ -217,6 +216,7 @@ class E2gatherController < ApplicationController
 
     # Add ingredient and guest to database
     @event.ingredient_list = ingredient_list
+    @event.guest_list = ""
     @event.accept = 0
     @event.reject = 0
     @event.unconfirmed = ""

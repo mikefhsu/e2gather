@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
     UserMailer.update_email(host, guest_name, self.name, mail_body).deliver
   end
 
-  def notify_guests(guest_list, raw_ingreds, lag)
+  def notify_guests(guest_list, raw_ingreds, flag)
     final_flag = -1;
     if flag == 1
       mail_body = self.name + 
