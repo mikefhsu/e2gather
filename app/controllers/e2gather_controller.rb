@@ -157,26 +157,31 @@ class E2gatherController < ApplicationController
     @total_ingred_list = Hash.new
     @event_ingredient.each {|tmp|
       user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
+	  #puts tmp.name+ " ddddddddddddddddddd for ddddddddddddddddd " + user_ingred
       guest_list = [] 
-      user_ingred.each{|i|
-      if session[:friend_list].nil? 
-        puts "session[:friend_list] is nil"
-        redirect_to "/e2gather/loginFacebook"
-        return
-      else
-        session[:friend_list].each{|f|
-        if f["id"] == i["user_id"]
-          puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
-          guest_list <<[ User.find(f["id"]).name , f["id"]]
-        else 
-          puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
-        end
-        }
-      end
-		
-      @total_ingred_list[tmp.name] = guest_list
-      puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
-      }	   
+	  if !user_ingred.any?()
+			guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
+			@total_ingred_list[tmp.name] = guest_list		
+	  else
+		user_ingred.each{|i|
+		if session[:friend_list].nil? 
+			puts "session[:friend_list] is nil"
+			redirect_to "/e2gather/loginFacebook"
+			return
+		else
+			session[:friend_list].each{|f|
+			if f["id"] == i["user_id"]
+				puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
+				guest_list <<[ User.find(f["id"]).name , f["id"]]
+			else 
+				puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
+			end
+			}
+		end
+	    @total_ingred_list[tmp.name] = guest_list
+		puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
+		}	  
+      end	  
     }
     #redirect_to "/e2gather/loginFacebook"
   end
