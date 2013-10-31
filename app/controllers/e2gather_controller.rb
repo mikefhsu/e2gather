@@ -102,7 +102,7 @@ class E2gatherController < ApplicationController
    @current_event = Event.find(params[:e_id])
    @event_ingredient =YAML::load( @current_event.ingredient_list)
    guest_list = ""
-   email_list =[]
+   # email_list =[]
    @event_ingredient.each {|tmp|
      if params[tmp.name].nil?
        render "e2gather/error_page"
@@ -110,9 +110,9 @@ class E2gatherController < ApplicationController
      end
      guest_list = guest_list + User.find(params[tmp.name]).name + ","
 	 tmp.user_id = params[tmp.name]
-	 puts "tmp.id:" +tmp.name
+	 puts "tmp.id:" + tmp.name
 	 #tmp.quantity = params[tmp.quantity]
-	 puts "tmp.quantity:" +tmp.quantity.to_s()
+	 puts "tmp.quantity:" + tmp.quantity.to_s()
 	# puts temp.to_s()
 	 #user_list << User.find(params[tmp.name]) 
    }
@@ -157,30 +157,29 @@ class E2gatherController < ApplicationController
     @total_ingred_list = Hash.new
     @event_ingredient.each {|tmp|
       user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
-	  #puts tmp.name+ " ddddddddddddddddddd for ddddddddddddddddd " + user_ingred
       guest_list = [] 
-	  if !user_ingred.any?()
-			guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
-			@total_ingred_list[tmp.name] = guest_list		
-	  else
-		user_ingred.each{|i|
-		if session[:friend_list].nil? 
-			puts "session[:friend_list] is nil"
-			redirect_to "/e2gather/loginFacebook"
-			return
-		else
-			session[:friend_list].each{|f|
-			if f["id"] == i["user_id"]
-				puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
-				guest_list <<[ User.find(f["id"]).name , f["id"]]
-			else 
-				puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
-			end
-			}
-		end
-	    @total_ingred_list[tmp.name] = guest_list
-		puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
-		}	  
+      if !user_ingred.any?()
+        guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
+        @total_ingred_list[tmp.name] = guest_list		
+      else
+        user_ingred.each{|i|
+        if session[:friend_list].nil? 
+          puts "session[:friend_list] is nil"
+          redirect_to "/e2gather/loginFacebook"
+          return
+        else
+          session[:friend_list].each{|f|
+            if f["id"] == i["user_id"]
+              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
+              guest_list << [ User.find(f["id"]).name , f["id"]]
+            else 
+              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
+            end
+          }
+        end
+        @total_ingred_list[tmp.name] = guest_list
+        puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
+      }
       end	  
     }
     #redirect_to "/e2gather/loginFacebook"
@@ -229,9 +228,9 @@ class E2gatherController < ApplicationController
     puts "Check event id: " + @event.event_id.to_s()
      
     if @event.save
-      redirect_to "/e2gather/loginFacebook"
+      redirect_to '/e2gather/loginFacebook'
     else
-      errorpage
+      errorpage 'Problem saving event. Please fill all fields with appropriate inputs'
     end
   end
      
@@ -258,9 +257,9 @@ class E2gatherController < ApplicationController
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
     else 
-      errorpage
+      errorpage 'Problem saving ingredient. Please fill all fields with appropriate inputs'
+    end
   end
-end
 
   def show_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -273,16 +272,15 @@ end
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
     
-
-      if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
-	       render "e2gather/show_ingredient"
-      else 
-        respond_to do |format|       
+    if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
+	    render "e2gather/show_ingredient"
+    else 
+      respond_to do |format|       
         format.html { render action: 'edit_ingredient' }
         format.json { render json: @ingredient.errors, status: :unprocessable_entity }
       end
+    end
   end
-end
 
   def delete_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -314,8 +312,9 @@ end
 	  # send message
   end
   
-  def errorpage
-    render "e2gather/error_page"
+  def errorpage(error_message)
+    flash[:error] = error_message
+    render 'e2gather/error_page'
   end
 			
   def getFriendList
