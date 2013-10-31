@@ -22,5 +22,11 @@ class UserMailer < ActionMailer::Base
       mail(:to => receiver.email, :subject => event_name + " is cancelled...", :body => content)
     end
   end
+  
+  def invite_email(user, email, name, quantity, ingre_name ,event_name)
+     mail(:to =>  email, :subject => 'Your friend '+user +' has just invited you to '+event_name, :body => "
+	 Hi, "+name +",please bring" +quantity +"unit(s) of "+ingre_name+"to "+event_name+", if you are interested! Please log into 
+	 e2gather to confirm or reject this event!")
+  end
 
 end
