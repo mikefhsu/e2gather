@@ -15,9 +15,15 @@
 <br>
 
 <p>
-  <%= link_to 'Back', {:action => 'loginFacebook'} %>
-  <%= link_to 'Edit', {:controller => "e2gather", :action => "edit_ingredient"} %>
-  <%= link_to 'Delete',{:controller => "e2gather", :action => "delete_ingredient"} %>
+  <%= form_tag({:controller => "e2gather", :action => "loginFacebook"}, :method=>"get") do %>
+  <%= submit_tag 'Back'%>
+  <% end %>
+  <%= form_tag({:controller => "e2gather", :action => "edit_ingredient"}, :method=>"get") do %>
+  <%= submit_tag 'Edit' %>
+  <% end %>
+  <%= form_tag({:controller => "e2gather", :action => "delete_ingredient"}, :method=>"get") do %>
+  <%= submit_tag 'Delete' %>
+  <% end %>
 </p>
   </div>
 </div>

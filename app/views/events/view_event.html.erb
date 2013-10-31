@@ -40,21 +40,21 @@
   <tr>
     <td>
       <%= form_tag({:controller => "e2gather", :action => "loginFacebook"}, :method=>"get") do %>
-      <%= submit_tag "Home", :class => "btn btn-large btn-primary" %>
+      <%= submit_tag "Home" %>
       <% end %>
     </td>
     <td>
       <%= form_tag({:controller => "users", :action => "update_invitation"}, :method=>"post") do %>
       <%= hidden_field_tag "e_id", @current_event.id %>
       <%= hidden_field_tag "option", 1 %>
-      <%= submit_tag "Accept Invition", :class => "btn btn-large btn-primary" %>
+      <%= submit_tag "Accept Invition" %>
       <% end %>
     </td>
     <td>
       <%= form_tag({:controller => "users", :action => "update_invitation"}, :method=>"post") do %>
       <%= hidden_field_tag "e_id", @current_event.id %>
       <%= hidden_field_tag "option", 0 %>
-      <%= submit_tag "Reject Invition", :class => "btn btn-large btn-primary" %>
+      <%= submit_tag "Reject Invition" %>
       <% end %>
     </td>
   </tr>
