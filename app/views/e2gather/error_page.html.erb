@@ -1,5 +1,5 @@
-<% provide(:title, "Error occurs!!") %>
-<h1>Error occurs!!</h1>
+<% provide(:title, "Error") %>
+<h1>That is an invalid action. Please try again.</h1>
 <%= form_tag({:controller => "e2gather", :action => "loginFacebook"}, :method=>"get") do %>
 <%= submit_tag "Home" %>
 <% end %>
