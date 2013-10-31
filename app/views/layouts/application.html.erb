@@ -5,13 +5,32 @@
   <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
-  <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
 </head>
-  <body>
+<body style="background: #cee0ed;">
   <div class="container">
-  <%= yield %>
+    <%= image_tag "e2gather.png" %>
+    <%= yield %>
+    <div id="footer">
+      <%= render 'layouts/footer' %>
+    </div>
   </div>
-  </body>
+</body>
+
+<style type="text/css">
+  html, body {
+    height: 100%;
+    background-color: #cee0ed;
+    padding-top: 10px;
+  }
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+#footer {
+  position:absolute;
+  bottom:0;
+  height:20px; 
+  padding-bottom:30px;
+}
+</style>
 </html>
