@@ -1,9 +1,23 @@
 <h1><%= @ingredient.name %></h1>
-<p><strong> Quantity :</strong> <%= @ingredient.quantity %><br />
-<strong>Unit :</strong> <%= @ingredient.unit %><br />
-<strong>Created Date:</strong> <%= @ingredient.created_at %><br />
+<div class = "field">
+  <div class="span6 offset3">
+<p>
+  <strong> Quantity :</strong> <%= @ingredient.quantity %>
 </p>
-<hr />
-<%= link_to 'Back', {:action => 'loginFacebook'} %>
-<%= link_to 'Edit', {:controller => "e2gather", :action => "edit_ingredient"} %>
-<%= link_to 'Delete',{:controller => "e2gather", :action => "delete_ingredient"} %>
+  <br>
+<p>
+  <strong>Unit :</strong> <%= @ingredient.unit %>
+</p>
+  <br>
+<p> 
+  <strong>Created Date:</strong> <%= @ingredient.created_at %>
+</p>
+<br>
+
+<p>
+  <%= link_to 'Back', {:action => 'loginFacebook'} %>
+  <%= link_to 'Edit', {:controller => "e2gather", :action => "edit_ingredient"} %>
+  <%= link_to 'Delete',{:controller => "e2gather", :action => "delete_ingredient"} %>
+</p>
+  </div>
+</div>

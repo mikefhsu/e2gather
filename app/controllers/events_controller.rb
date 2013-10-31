@@ -1,3 +1,4 @@
+require 'yaml'
 class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update, :destroy]
   
@@ -12,11 +13,29 @@ class EventsController < ApplicationController
   def show
     puts "In show"
   end
+  
+  def extract_raw_ingreds(ingred_obj_list)
+    ingred_obj_list = YAML::load(ingred_obj_list)
+    raw_ingreds = ""
+    ingred_obj_list.each {|tmp|
+      raw_ingreds = raw_ingreds + tmp.name + ","
+    }
+
+    raw_ingreds = raw_ingreds[0...-1]
+    return raw_ingreds
+  end
 
   def view_event_page
     puts "Check params in view_event_page " + params.to_s 
     @current_event = Event.find(params[:e_id])
     @current_user = User.find(session[:user_id])
+ 
+    @raw_ingreds = extract_raw_ingreds(@current_event.ingredient_list)
+
+    if (@current_event.status != "Pending")
+      render "events/view_final_event"
+      return
+    end
 
     if (@current_event.host == @current_user.name)
       render "events/view_host_event"
@@ -43,12 +62,13 @@ class EventsController < ApplicationController
       guest_objs << User.find_by(name: tmp)
     } 
     
+    @raw_ingreds = extract_raw_ingreds(@current_event.ingredient_list)  
     if (params[:option] == "1") 
       puts "Check guest obj: " + guest_objs.to_s
       if @current_event.unconfirmed.length == 0
         @current_event.status = "Confirmed"
         if @current_event.save
-          @current_event.notify_guests(guest_objs, 1)
+          @current_event.notify_guests(guest_objs, @raw_ingreds, 1)
           flash[:event_msg] = "Event confirmed: " + @current_event.name + "!!"
           render "events/event_finalized"
         else
@@ -56,13 +76,13 @@ class EventsController < ApplicationController
         end
       else
         flash.now[:alert] = "Not every guest has responded!"
-        render_to "/e2gather/loginFacebook"
+        redirect_to "/e2gather/loginFacebook"
         return
       end
     else
       @current_event.status = "Cancelled"
       if @current_event.save
-        @current_event.notify_guests(guest_objs, 0)
+        @current_event.notify_guests(guest_objs, @raw_ingreds, 0)
         flash[:event_msg] = "Event canceled: " + @current_event.name + "..."
         render "events/event_finalized"
       else

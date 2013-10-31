@@ -1,6 +1,6 @@
 <ul>
  
-<%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)
+<h2><%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)</h2>
 <%= link_to "Logout\n", "/logout" %>
 <hr>
 <ul>
@@ -12,7 +12,7 @@
     <div><%= submit_tag "Find E2gathers"%></div>
 <% end %>
 -->
-
+<h3>
 <table border="3" cellpadding="10" cellspacing="10">
 <tr>
   <td><b>Friends</b></td>
@@ -51,6 +51,7 @@
     </tr>
   <% end %>
 </table>
+<br>
 <%= form_tag("render_ingredient_page", method: "get") do %>
   <div><%= submit_tag "Add Ingredient" %></div>
 <% end %>
@@ -74,13 +75,14 @@
     </tr>
     <% end %>
   </table>
+  <br>
   <%= form_tag("render_event_page", method: "get") do %>
     <div><%= submit_tag "Create New Event" %></div>
   <% end %>
 </td>
 </tr>
 </table>
-
+</h3>
 <!--<% session[:friend_list].each do |f| %>-->
 <!--<%= f["name"] %> (<i><%=f["id"] %></i>)<hr>-->
 <!--<% end %>-->

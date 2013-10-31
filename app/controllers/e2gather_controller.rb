@@ -52,17 +52,15 @@ class E2gatherController < ApplicationController
       end 
       
       session[:user_id] = @current_user.user_id       
-      puts "Check instance var current_user " + session[:user_id]	
-      #end 
-	  puts session[:friend_list].to_s()
-	  if session[:friend_list] ==0 or session[:friend_list]==nil
-      @friends = @api.get_connections(user["id"], "friends")
-	  @friend_list =getFriendList 
-	  session[:friend_list] = @friend_list
-      puts "Facebook friends: " + @friends.to_s()     
+      puts "Check instance var current_user " + session[:user_id]	 
+      puts session[:friend_list].to_s()
+      if session[:friend_list] ==0 or session[:friend_list]==nil
+        @friends = @api.get_connections(user["id"], "friends")
+	@friend_list =getFriendList 
+	session[:friend_list] = @friend_list
+        puts "Facebook friends: " + @friends.to_s()     
       end
- 
-      #@event_list = Event.all 
+      
       @ingredient_list = Ingredient.where(user_id: user["id"])  
  
     rescue Exception=>ex
@@ -89,8 +87,11 @@ class E2gatherController < ApplicationController
     if @event_list.nil?
       @event_list = Array.new
     end
-    
-    puts "Check events: " + @event_list.to_s
+  end
+
+ 
+
+  def sendmail
   end
   
   def sendmsg
@@ -116,14 +117,16 @@ class E2gatherController < ApplicationController
 	# puts temp.to_s()
 	 #user_list << User.find(params[tmp.name]) 
    }
-   puts  guest_list   +"00000000000000000000000000000000000000"
-   puts  guest_list[0...-1]  +"111111111111111111111111111111111111111111111111111"
-   puts guest_list[0...-2]  +"22222222222222222222222222222222222222222222222222"
    guest_list = guest_list[0...-1]
    @current_event.guest_list = guest_list
+ 
    @current_event.ingredient_list = @event_ingredient
   # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
   
+ 
+   @current_event.unconfirmed = guest_list
+
+ 
    if @current_event.save
    
 
@@ -143,45 +146,39 @@ class E2gatherController < ApplicationController
      render "e2gather/error_page"
    end
   end
-  
+
   def render_event_page
-    @ing_list=[]
-	@guest_list =''
-	@guest_list << 'a'
-	@guest_list1 = ["Dollar", "1"], ["Kroner", "2"]
     render "e2gather/new_user_event"
   end
-  
+ 
   def pick_guest_page
-	@current_event = Event.find(params[:e_id])
-	@event_ingredient =YAML::load( @current_event.ingredient_list)
+    @current_event = Event.find(params[:e_id])
+    @event_ingredient =YAML::load( @current_event.ingredient_list)
 	
-	@total_ingred_list = Hash.new
-	
-	@event_ingredient.each {|tmp|
-	  user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
+    @total_ingred_list = Hash.new
+    @event_ingredient.each {|tmp|
+      user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
       guest_list = [] 
       user_ingred.each{|i|
-        if session[:friend_list].nil? 
-          puts "session[:friend_list] is nil"
-		  redirect_to "/e2gather/loginFacebook"
-		  return
-        else
-          session[:friend_list].each{|f|
-            if f["id"] == i["user_id"]
-              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
-              guest_list <<[ User.find(f["id"]).name , f["id"]]
-            else 
-              puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
-            end
-          }
+      if session[:friend_list].nil? 
+        puts "session[:friend_list] is nil"
+        redirect_to "/e2gather/loginFacebook"
+        return
+      else
+        session[:friend_list].each{|f|
+        if f["id"] == i["user_id"]
+          puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> MATCH"
+          guest_list <<[ User.find(f["id"]).name , f["id"]]
+        else 
+          puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
         end
+        }
+      end
 		
-		@total_ingred_list[tmp.name] = guest_list
-		puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
-	   }
-	   
-	}
+      @total_ingred_list[tmp.name] = guest_list
+      puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
+      }	   
+    }
     #redirect_to "/e2gather/loginFacebook"
   end
   
@@ -200,8 +197,6 @@ class E2gatherController < ApplicationController
     @event.host = @current_user.name
     @event.name = params[:name]
     @event.location = params[:location]
-    #puts 'mymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyumymymyu' + params[:guest]
-    # Generate event id for event
     @event.event_id = Time.now.to_i 
     # Status: Pending, Confirmed, Cancelled
     @event.status = "Pending"
@@ -213,7 +208,7 @@ class E2gatherController < ApplicationController
     @event.date_time = date
 
     # Collect ingredient and guest
-	ingredient_list =[]
+    ingredient_list =[]
     ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
     ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
     ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
@@ -222,20 +217,16 @@ class E2gatherController < ApplicationController
 
     # Add ingredient and guest to database
     @event.ingredient_list = ingredient_list
-    #@event.guest_list = guest_list.to_sentence
-    #@event.unconfirmed = guest_list.to_sentence
     @event.accept = 0
     @event.reject = 0
+    @event.unconfirmed = ""
  
     puts "Check event id: " + @event.event_id.to_s()
      
     if @event.save
       redirect_to "/e2gather/loginFacebook"
     else
-      respond_to do |format|
-        format.html { render action: 'new' }
-        format.json { render json: @event.errors, status: :unprocessable_entity }
-      end
+      errorpage
     end
   end
      
@@ -262,12 +253,9 @@ class E2gatherController < ApplicationController
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
     else 
-      respond_to do |format|
-        format.html { render action: 'create_ingredient' }
-        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-      end
-    end
+      errorpage
   end
+end
 
   def show_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -280,6 +268,7 @@ class E2gatherController < ApplicationController
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
     
+
       if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
 	       render "e2gather/show_ingredient"
       else 
@@ -287,8 +276,8 @@ class E2gatherController < ApplicationController
         format.html { render action: 'edit_ingredient' }
         format.json { render json: @ingredient.errors, status: :unprocessable_entity }
       end
-    end
   end
+end
 
   def delete_ingredient
     @ingredient = Ingredient.find(params[:id])
@@ -298,6 +287,28 @@ class E2gatherController < ApplicationController
     
   end
 
+
+     #respond_to do |format|
+     # if @event.save
+     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
+     #   format.json { render action: 'show', status: :created, location: @event }
+     #   redirect_to "e2gather/loginFacebook"
+     # else
+     #   format.html { render action: 'new' }
+     #   format.json { render json: @event.errors, status: :unprocessable_entity }
+     # end
+     #end
+  #    respond_to do |format|
+   #     format.html { render action: 'new' }
+   #     format.json { render json: @ingredient.errors, status: :unprocessable_entity }
+  #    end
+  #  end
+ # end
+	
+  def sendInvitation
+	  # send message
+  end
+  
   def errorpage
     render "e2gather/error_page"
   end
@@ -308,8 +319,14 @@ class E2gatherController < ApplicationController
       if User.where(user_id: (f["id"])).exists?
         puts "find friend !"
         friend_e2gather << f
+      else
+        puts "attempt to invite friends joining e2gather"
+        #@api.put_wall_post("Test123", {}, f["id"], {});
       end
     end
     return friend_e2gather
   end
-end	
+end
+
+
+	
