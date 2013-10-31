@@ -1,7 +1,7 @@
 <ul>
  
 <h2><%= @current_user["name"] %> (<i><%=@current_user["user_id"] %></i>)</h2>
-<%= link_to "Logout\n", "/logout" %>
+<%= link_to "Logout\n", "/logout" %> <%= link_to "Refresh\n", {:controller => "e2gather", :action => 'loginFacebook'}%>
 <hr>
 <ul>
 <!--
