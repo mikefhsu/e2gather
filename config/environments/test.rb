@@ -21,7 +21,7 @@ E2gather::Application.configure do
           :user_name => 'e2gather@gmail.com',
           :password => 'e2gather2013'
       }
-  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.delivery_method = :test
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_options = {from: 'e2gather@gmail.com'}

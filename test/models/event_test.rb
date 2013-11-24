@@ -264,4 +264,112 @@ class EventTest < ActiveSupport::TestCase
 
         assert e.save, "Save the event with location length eaual to 255"
   end
+ 
+  
+  
+  def createevent  
+		e = Event.new
+        e.name = @@event_name
+        e.location = @@within_bound
+        e.event_id = Time.now.to_i
+        e.status = @@event_status
+        e.date_time = @@valid_date
+		e.host= 'Le Chang'
+        # Collect ingredient and guest
+        ingredient_list =[]
+
+        ingredient_list << Ingredient.new( :name=>  "ingred1", :ingredient_id =>0, :quantity=> 1,  :unit=>0, :user_id=> 0)
+        ingredient_list << Ingredient.new( :name=>  "ingred2", :ingredient_id =>0, :quantity=> 2,  :unit=>0, :user_id=> 0)
+        ingredient_list << Ingredient.new( :name=>  "ingred3", :ingredient_id =>0, :quantity=> 3,  :unit=>0, :user_id=> 0)
+
+        # Add ingredient and guest to database
+        e.ingredient_list = ingredient_list.to_s
+        e.guest_list =""
+        e.accept = 0
+        e.reject = 0
+        e.unconfirmed = "" 
+		return e
+  end
+  
+  test "Notify 0 guest and 0 host with flag 1, accept, no email to be send" do
+    assert_raises(TypeError,NoMethodError) {
+		e = createevent
+		s =ActionMailer::Base.deliveries.size
+		e.notify_guests('', 'rice', 1)
+		e.notify_host('', '', 1)
+		assert_equal ActionMailer::Base.deliveries.size, s
+	}
+  end
+ test "Notify 0 guest and 0 host with flag 0, rejection, no email to be send" do
+    assert_raises(TypeError,NoMethodError) {
+		e = createevent
+		s =ActionMailer::Base.deliveries.size
+		e.notify_guests('', 'rice', 0)
+		e.notify_host('', '', 0)
+		assert_equal ActionMailer::Base.deliveries.size, s
+	}
+  end
+   test "Notify 0 host with flag 2, completion, no email to be send" do
+    assert_raises(TypeError,NoMethodError) {
+		e = createevent
+		s =ActionMailer::Base.deliveries.size
+		#e.notify_guests('', 'rice', 0)
+		e.notify_host('', '', 2)
+		assert_equal ActionMailer::Base.deliveries.size, s
+	}
+  end
+    test "Notify 1 guest and 1 host with flag 1, accept, two email to be send" do
+ 
+		e = createevent
+		s =ActionMailer::Base.deliveries.size
+		gs = Array.new
+		gs<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_guests(gs, 'rice', 1)
+		host =User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_host(host, 'Le Chang', 1)
+		assert_equal ActionMailer::Base.deliveries.size, s+2
+	 
+  end
+ test "Notify 2 guest and 1 host with flag 0, rejection, three email to be send" do
+     
+		e = createevent
+		#e.guest_list<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		#e.guest_list<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		s =ActionMailer::Base.deliveries.size
+		gs = Array.new
+		gs<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		gs<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_guests(gs, 'rice', 0)
+		host= User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_host(host, 'Le Chang', 0)
+		assert_equal ActionMailer::Base.deliveries.size, s+3
+	 
+  end
+  test "Notify 1 host with flag 2, completion, one email to be send" do
+     
+		e = createevent
+		#e.guest_list<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		s =ActionMailer::Base.deliveries.size
+		#e.notify_guests('', 'rice', 0)
+		#e.notify_guests(e.guest_list, 'rice', 1)
+		host=User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_host(host, 'Le Chang', 2)
+		assert_equal ActionMailer::Base.deliveries.size, s+1
+	 
+  end
+  
+   test "Notify 1 guest and 1 host with flag 100, accept, no email to be send" do
+     
+		e = createevent
+		#e.guest_list<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		s =ActionMailer::Base.deliveries.size
+		gs = Array.new
+		gs<<User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_guests(gs, 'rice', 100)
+		host=User.new(:user_id=> '10000213421312' , :email=> 'changle@live.cn', :name=> 'Le Chang')
+		e.notify_host(host, 'Le Chang', 100)
+		assert_equal ActionMailer::Base.deliveries.size, s
+	 
+  end
+  
 end
