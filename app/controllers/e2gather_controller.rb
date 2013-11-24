@@ -120,23 +120,19 @@ class E2gatherController < ApplicationController
    @current_event.guest_list = guest_list
  
    @current_event.ingredient_list = @event_ingredient
-  # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
-  
- 
+   # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+
    @current_event.unconfirmed = guest_list
 
  
    if @current_event.save
-   
-
-
-	 @event_ingredient.each {|tmp|
-#	 puts "user name:" +User.find(session[:user_id]).name
-#puts "invitee email:" +User.find(tmp.user_id).email
-#puts "invitee name:" +User.find(tmp.user_id).name
-#puts "ingre quantity:" + tmp.quantity
-#puts "ingre name:" +tmp.name
-#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+	@event_ingredient.each {|tmp|
+	#puts "user name:" +User.find(session[:user_id]).name
+	#puts "invitee email:" +User.find(tmp.user_id).email
+	#puts "invitee name:" +User.find(tmp.user_id).name
+	#puts "ingre quantity:" + tmp.quantity
+	#puts "ingre name:" +tmp.name
+	#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
   
 	 UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
    }

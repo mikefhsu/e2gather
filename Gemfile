@@ -5,8 +5,8 @@ gem 'rails', '4.0.0'
 gem 'koala', '1.3.0'
 gem 'bootstrap-sass', '2.3.2.0'
 
-# Use sqlite3 as the database for Active Record
-#gem 'sqlite3'
+# Use sqlite3 as the testing database
+gem 'sqlite3'
 #gem 'tlsmail'
 # Use mysql as the database
 gem 'mysql'
