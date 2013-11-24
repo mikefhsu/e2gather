@@ -1,8 +1,65 @@
 require 'test_helper'
+require 'yaml'
 
 class EventsControllerTest < ActionController::TestCase
   setup do
     @event = events(:one)
+	
+	# Create three users for testing
+	user1 = User.new(:user_id => "100005852740904", :name => "Peter Louis Terry",:email => "mike.fh.su@gmail.com")
+        user1.save
+
+	user2 = User.new(:user_id => "1226970106", :name => "Lindsay Neubauer", :email => "neubauer.lindsay@gmail.com ")
+	user2.save
+
+	user3 = User.new(:user_id => "100001069360694", :name => "Chang Le", :email => "changle@live.cn")
+	user3.save
+
+	@current_user = user1
+	session[:user_id] = @current_user.user_id
+	
+	#Create fake event
+	@event = Event.new
+	@event.name = "For test"
+	@event.event_id = Time.now.to_i
+	@event.host = @current_user.name
+	@event.guest_list = "Lindsay Neubauer,Chang Le"
+
+	#Create fake ingredient
+	ingredient_list =[]
+        ingredient_list << Ingredient.new( :name=>  "ingred1", :ingredient_id =>0, :quantity=> 1,  :unit=>0, :user_id=> "1226970106")
+        ingredient_list << Ingredient.new( :name=>  "ingred2", :ingredient_id =>0, :quantity=> 2,  :unit=>0, :user_id=> "100001069360694")
+	@event.ingredient_list = YAML.dump(ingredient_list)
+	@event.unconfirmed = ""
+	@event.accept = 2
+        @event.reject = 0
+
+	@event.save
+  end
+
+  def teardown
+	@event = nil
+	@current_user = nil
+  end
+
+  test "should finalize hold event" do
+  	post(:finalized, {"e_id" => @event.id}, {"option" => 1})
+	assert_template "event_finalized"
+	assert_response :success
+  end
+
+  test "should not finalize hold event" do
+  	@event.unconfirmed = "test123"
+	@event.save
+        post(:finalized, {"e_id" => @event.id}, {"option" => 1})
+	assert_response :success
+	#assert_redirected_to(controller: "e2gather")
+  end
+
+  test "should finalize cancelled event" do
+  	post(:finalized, {"e_id" => @event.id}, {"option" => 2})
+	assert_template "events/event_finalized"
+	assert_response :success
   end
 
   test "should get index" do
