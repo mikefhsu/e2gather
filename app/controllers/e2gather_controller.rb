@@ -285,28 +285,6 @@ class E2gatherController < ApplicationController
       redirect_to "/e2gather/loginFacebook"
     
   end
-
-
-     #respond_to do |format|
-     # if @event.save
-     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
-     #   format.json { render action: 'show', status: :created, location: @event }
-     #   redirect_to "e2gather/loginFacebook"
-     # else
-     #   format.html { render action: 'new' }
-     #   format.json { render json: @event.errors, status: :unprocessable_entity }
-     # end
-     #end
-  #    respond_to do |format|
-   #     format.html { render action: 'new' }
-   #     format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-  #    end
-  #  end
- # end
-	
-  def sendInvitation
-	  # send message
-  end
   
   def errorpage(error_message)
     flash[:error] = error_message
