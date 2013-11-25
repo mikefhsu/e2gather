@@ -264,4 +264,247 @@ class EventTest < ActiveSupport::TestCase
 
         assert e.save, "Save the event with location length eaual to 255"
   end
+
+ ####################################################################
+ ####################################################################
+ #test different aspect of ingredient list in event
+
+     @@max_quantity = 3.402823466E+38
+     
+
+  test "should not save event with negative ingredient quantity" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> -1,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert !event.save, "Save an event which has negative ingredient quantity"
+    
+end
+
+test "should not save event with zero ingredient quantity" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>0,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> 3,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert !event.save, "Save an event which has zero ingredient quantity"
+    
+end
+
+test "should save event with ingredient quantity greater than zero" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>0.001,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> 3,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert event.save, "Fail to save an event which has 0.001 ingredient quantity"
+    
+end
+
+test "should not save event with ingredient quantity that is greater than max of float" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> @@max_quantity+1,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> 3,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert !event.save, "Save an event which has ingredient quantity that is greater than max of float"
+    
+end
+
+test "should save event with ingredient quantity that is equal to max of float" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>@@max_quantity,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=>2,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> 3,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert event.save, "Fail to save an event which has ingredient quantity equals with max of float"
+    
+end
+
+test "should not save event with ingredient quantity that is a string" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=>"two",  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=> 3,  :unit=>"dozen", :user_id=> 0)
+
+
+
+    assert !event.save, "Save an event which has ingredient quantity that is a string"
+    
+end
+
+
+  test "should not save event without any ingredient" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.ingredient_list = ""  # no ingredient
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    assert !event.save, "Save an event which has no ingredient"
+    
+end
+
+  # for the current version we only accept exactly three ingredients 
+  test "should not save event with less than three ingredient" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+    
+    # a list with 2 ingredients
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+
+    event.ingredient_list = ingre_list.to_s
+
+    assert !event.save, "Save an event which has less than three ingredients"
+end
+  test "should save event with exactly three ingredient" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=>3,  :unit=>"dozen", :user_id=> 0)
+    
+
+    event.ingredient_list = ingre_list.to_s
+
+    assert event.save, "Fail to save an event which has exactly three ingredients"
+end
+
+
+ # for the current version we only accept exactly three ingredients 
+  test "should not save event with greater than three ingredient" do
+    event = Event.new
+    event.event_id = Time.now.to_i
+    event.name = @@event_name
+    event.location = @@event_location
+    event.date_time = @@valid_date
+    event.host = @@event_host
+    event.guest_list = ""
+    event.status = @@event_status
+    event.unconfirmed = ""
+    event.accept = 0
+    event.reject = 0
+
+    ingre_list =[]
+    ingre_list << Ingredient.new( :name=> "milk", :ingredient_id =>Time.now.to_i, :quantity=>1,  :unit=>"ounce", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "rice", :ingredient_id =>Time.now.to_i, :quantity=> 2.5,  :unit=>"pound", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "egg", :ingredient_id =>Time.now.to_i, :quantity=>3,  :unit=>"dozen", :user_id=> 0)
+    ingre_list << Ingredient.new( :name=> "tomato", :ingredient_id =>Time.now.to_i, :quantity=> 4,  :unit=>"pound", :user_id=> 0)
+
+    event.ingredient_list = ingre_list.to_s
+
+    assert !event.save, "Save an event which has more than three ingredients"
+end
 end

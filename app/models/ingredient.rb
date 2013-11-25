@@ -1,5 +1,5 @@
 class Ingredient < ActiveRecord::Base
-self.primary_key='ingredient_id'
+self.primary_key='id'
 belongs_to :user
 validates_presence_of :name
 validates_presence_of :unit
