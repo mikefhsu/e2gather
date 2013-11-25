@@ -21,6 +21,7 @@ class EventsControllerTest < ActionController::TestCase
 	#Create fake event
 	@event = Event.new
 	@event.name = "For test"
+	@event.location = "TestLocation"
 	@event.event_id = Time.now.to_i
 	@event.host = @current_user.name
 	@event.guest_list = "Lindsay Neubauer,Chang Le"
@@ -43,7 +44,7 @@ class EventsControllerTest < ActionController::TestCase
   end
 
   test "should finalize hold event" do
-  	post(:finalized, {"e_id" => @event.id}, {"option" => 1})
+  	post(:finalized, {"e_id" => @event.id, "option" => "1"})
 	assert_template "event_finalized"
 	assert_response :success
   end
@@ -51,13 +52,13 @@ class EventsControllerTest < ActionController::TestCase
   test "should not finalize hold event" do
   	@event.unconfirmed = "test123"
 	@event.save
-        post(:finalized, {"e_id" => @event.id}, {"option" => 1})
-	assert_response :success
-	#assert_redirected_to(controller: "e2gather")
+        post(:finalized, {"e_id" => @event.id, "option" => "1"})
+	assert_response :redirect
+	assert_redirected_to(controller: "e2gather")
   end
 
   test "should finalize cancelled event" do
-  	post(:finalized, {"e_id" => @event.id}, {"option" => 2})
+  	post(:finalized, {"e_id" => @event.id, "option" => "2"})
 	assert_template "events/event_finalized"
 	assert_response :success
   end

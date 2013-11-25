@@ -47,6 +47,9 @@ end
 # Active record session (fixes ActionDispatch::Cookies::CookieOverflow)
 gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 
+# For coverage analysis
+gem 'simplecov', require: false, :group => :test
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
