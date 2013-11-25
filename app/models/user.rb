@@ -3,38 +3,6 @@ self.primary_key='user_id'
 has_many :ingredients, dependent: :destroy
 has_many :events, dependent: :destroy
 
-def add_ingredient(new_ingredient)
-  if @ingredients.nil?
-    @ingredients = Array.new
-  end
-  @ingredients << new_ingredient
-end
-
-def delete_ingredient(ingred_id)
-  unless @ingredients.nil? or @ingredents.length == 0
-    @ingredients.each { |tmp|
-      if tmp.get_id() == ingred_id
-        @ingredients.delete(tmp)
-        return
-      end
-    }
-  end
-end
-
-def update_ingredient(ingred_id, quant)
-    unless @ingredients.nil? or @ingredients.length == 0
-      @ingredeints.each { |tmp|
-        if tmp.get_id() == ingred_id
-          diff = tmp.get_quant() - quant
-          if diff < 0
-            tmp.set_quant(0)
-          else
-            tmp.set_quant(diff)
-          end
-        end
-      }
-    end
-end
 
 def create_event(name, location, date, ingredients, guests)
   if @events.nil?
