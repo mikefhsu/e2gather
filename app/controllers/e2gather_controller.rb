@@ -1,9 +1,5 @@
-#require 'net/smtp'
-#require 'tlsmail'
 require 'yaml'
 class E2gatherController < ApplicationController
-  #@db_info
-  #@db_fetch_result
   def index
     puts "Check session " + session.to_s
     session[:oauth] = Koala::Facebook::OAuth.new(APP_ID, APP_SECRET, SITE_URL + '/e2gather/loginFacebook')
@@ -22,12 +18,11 @@ class E2gatherController < ApplicationController
   end
   
   def loginFacebook 
+    # Get current user
     if params[:code] and session[:access_token].nil?
       # acknowledge code and get access token from FB
       session[:access_token] = session[:oauth].get_access_token(params[:code])
     end		
-    
-    #re-direct to E2Gather home page 
 		  
     # auth established, now do a graph call:  
     @api = Koala::Facebook::API.new(session[:access_token])
@@ -36,7 +31,7 @@ class E2gatherController < ApplicationController
       user = @api.get_object("me")
   
       puts "Get me " + user.to_s()
-     #if session[:user_id].nil?	
+      #if session[:user_id].nil?	
       if User.where(user_id: user["id"]).exists?
         @current_user = User.find(user["id"])
       else
@@ -54,10 +49,10 @@ class E2gatherController < ApplicationController
       session[:user_id] = @current_user.user_id       
       puts "Check instance var current_user " + session[:user_id]	 
       puts session[:friend_list].to_s()
-      if session[:friend_list] ==0 or session[:friend_list]==nil
+      if session[:friend_list] == 0 or session[:friend_list] == nil
         @friends = @api.get_connections(user["id"], "friends")
-	@friend_list =getFriendList 
-	session[:friend_list] = @friend_list
+        @friend_list = getFriendList 
+        session[:friend_list] = @friend_list
         puts "Facebook friends: " + @friends.to_s()     
       end
       
@@ -112,8 +107,8 @@ class E2gatherController < ApplicationController
 	 tmp.user_id = params[tmp.name]
 	 puts "tmp.id:" + tmp.name
 	 #tmp.quantity = params[tmp.quantity]
-	 puts "tmp.quantity:" + tmp.quantity.to_s()
-	# puts temp.to_s()
+    puts "tmp.quantity:" + tmp.quantity.to_s()
+	  # puts temp.to_s()
 	 #user_list << User.find(params[tmp.name]) 
    }
    guest_list = guest_list[0...-1]
@@ -125,8 +120,8 @@ class E2gatherController < ApplicationController
    @current_event.unconfirmed = guest_list
 
  
-   if @current_event.save
-	@event_ingredient.each {|tmp|
+    if @current_event.save
+	    @event_ingredient.each {|tmp|
 	#puts "user name:" +User.find(session[:user_id]).name
 	#puts "invitee email:" +User.find(tmp.user_id).email
 	#puts "invitee name:" +User.find(tmp.user_id).name
@@ -134,12 +129,13 @@ class E2gatherController < ApplicationController
 	#puts "ingre name:" +tmp.name
 	#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
   
-	 UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
-   }
-     redirect_to "/e2gather/loginFacebook"
-   else
+	      UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
+          tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
+      }
+      redirect_to "/e2gather/loginFacebook"
+    else
      render "e2gather/error_page"
-   end
+    end
   end
 
   def render_event_page
@@ -246,9 +242,7 @@ class E2gatherController < ApplicationController
     @ingredient.name = params[:name];
     @ingredient.quantity = params[:quantity]
     @ingredient.unit = params[:unit]
-
-    ingre_id = Time.now.to_i
-    @ingredient.ingredient_id = ingre_id
+    @ingredient.ingredient_id =  Time.now.to_i
 
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
@@ -286,28 +280,6 @@ class E2gatherController < ApplicationController
     
   end
 
-
-     #respond_to do |format|
-     # if @event.save
-     #   format.html { redirect_to @event, notice: 'Event was successfully created.' }
-     #   format.json { render action: 'show', status: :created, location: @event }
-     #   redirect_to "e2gather/loginFacebook"
-     # else
-     #   format.html { render action: 'new' }
-     #   format.json { render json: @event.errors, status: :unprocessable_entity }
-     # end
-     #end
-  #    respond_to do |format|
-   #     format.html { render action: 'new' }
-   #     format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-  #    end
-  #  end
- # end
-	
-  def sendInvitation
-	  # send message
-  end
-  
   def errorpage(error_message)
     flash[:error] = error_message
     render 'e2gather/error_page'
