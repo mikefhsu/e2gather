@@ -22,6 +22,7 @@ class EventsControllerTest < ActionController::TestCase
 	@event = Event.new
 	@event.name = "For test"
 	@event.location = "TestLocation"
+	@event.status = "Pending"
 	@event.event_id = Time.now.to_i
 	@event.host = @current_user.name
 	@event.guest_list = "Lindsay Neubauer,Chang Le"
@@ -54,13 +55,28 @@ class EventsControllerTest < ActionController::TestCase
 	@event.save
         post(:finalized, {"e_id" => @event.id, "option" => "1"})
 	assert_response :redirect
-	assert_redirected_to(controller: "e2gather")
+	assert_redirected_to(controller: "e2gather", action: "loginFacebook")
   end
 
   test "should finalize cancelled event" do
   	post(:finalized, {"e_id" => @event.id, "option" => "2"})
 	assert_template "events/event_finalized"
 	assert_response :success
+  end
+  
+  test "should view pending event page" do
+  	get(:view_event_page, {"e_id" => @event.id})
+	assert_response :success
+	assert_template "events/view_host_event"
+  end
+
+  test "should view confirmed event page" do
+  	@event.status = "Confirmed"
+	@event.save
+
+	get(:view_event_page, {"e_id" => @event.id})
+	assert_response :success
+	assert_template "events/view_final_event"
   end
 
   test "should get index" do

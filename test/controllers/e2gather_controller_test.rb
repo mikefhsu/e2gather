@@ -74,7 +74,7 @@ class E2gatherControllerTest < ActionController::TestCase
 	assert_template("new_user_event")
   end
 
-  test "should rebder ingredient page" do
+  test "should render ingredient page" do
   	get(:render_ingredient_page)
 	assert_template("new_ingredient")
   end
