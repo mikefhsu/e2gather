@@ -3,26 +3,65 @@
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
-Things you may want to cover:
-
 * Ruby version
 
-* System dependencies
+ruby-2.0.0-p247
+rails -v 4.0.0
 
 * Configuration
+Run the following commands in the vagrant environment:
+
+sudo apt-get update
+
+sudo apt-get install curl
+
+curl -L get.rvm.io | bash -s stable --auto
+
+source  ~/.bash_profile
+
+rvm requirements
+
+sudo apt-get install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
+
+sudo apt-get install pkg-config libmysqlclient-dev nodejs
+
+rvm install 2.0.0
+
+rvm use 2.0.0
+
+rvm install ruby-2.0.0-p247
+
+rvm --default use 2.0.0-p247
+
+gem install rails -v 4.0.0
+
+sudo apt-get install mysql-server mysql-client
+
+gem install mysql
+
+gem install mysql2
+
+bundle install
+
 
 * Database creation
 
-* Database initialization
+vagrant@precise32:~/e2gather$ rake db:create
+
+vagrant@precise32:~/e2gather$ rake db:schema:load
+
 
 * How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+vagrant@precise32:~/e2gather$ rake db:test:load
+
 
 * Deployment instructions
+Must have a Facebook account to run E2Gather
+http://localhost:4567/
 
-* ...
+Ideally more than one Facebook friend needs to login to E2Gather on the machine hosting the
+database for all functionality to be used. It is also possible to add "friends" directly in
+the user table of the database.
 
-
-Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
