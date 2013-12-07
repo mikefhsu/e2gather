@@ -23,36 +23,34 @@
       <div>
       <b>Ingredients</b>
       <table>
+	<% for i in 0..@emp_ingred.length-1%>
         <tr>
-		  <td><%= label_tag("Ingredients") %></td>
-		  <td><%= text_field_tag(:ingredient1)%></td>
-		  <td><%= label_tag("Quantity") %></td>
-		  <td><%= text_field_tag(:q1)%></td>
-		</tr>
-		 <tr>
-		  <td><%= label_tag("Ingredients") %></td>
-		  <td><%= text_field_tag(:ingredient2)%></td>
-		  <td><%= label_tag("Quantity") %></td>
-		  <td><%= text_field_tag(:q2)%></td>
- 		</tr>
-	   <tr>
-		  <td><%= label_tag("Ingredients") %></td>
-		  <td><%= text_field_tag(:ingredient3)%></td>
-		  <td><%= label_tag("Quantity") %></td>
-		  <td><%= text_field_tag(:q3)%></td>
-		</tr>
-		   
+		<td><%= label_tag("Ingredients") %></td>
+		<td><%= text_field_tag(@emp_ingred[i])%></td>
+		<td><%= label_tag("Quantity") %></td>
+		<td><%= text_field_tag(@emp_q[i])%></td>
+	</tr>
+	<% end %>
+	<!--<tr>
+		<td><%= label_tag("Ingredients") %></td>
+		<td><%= text_field_tag(:ingredient2)%></td>
+		<td><%= label_tag("Quantity") %></td>
+		<td><%= text_field_tag(:q2)%></td>
+ 	</tr>
+	<tr>
+		<td><%= label_tag("Ingredients") %></td>
+		<td><%= text_field_tag(:ingredient3)%></td>
+		<td><%= label_tag("Quantity") %></td>
+		<td><%= text_field_tag(:q3)%></td>
+	</tr>-->	   
       </table>
       </div>
       <br>
-      <%= submit_tag "Create event" %>
+      <% session[:emp_ingred] = @emp_ingred%>
+      <% session[:emp_q] = @emp_q%>
+      <%= submit_tag "Add ingredient", :name=>"add"%>
+      <%= submit_tag "Create event", :name=>"create"%>
     <% end %>
-	
-	         
-		  
-
- 
- 
   </div>
 </div>
 

@@ -139,6 +139,14 @@ class E2gatherController < ApplicationController
   end
 
   def render_event_page
+    #Default 3 ingredients
+    @emp_ingred = Array.new
+    @emp_q = Array.new
+    for i in 0..2
+	@emp_ingred << "ingredient" + i.to_s
+	@emp_q << "q" + i.to_s
+    end
+    puts "Check emp_ingred " + @emp_ingred.to_s
     render "e2gather/new_user_event"
   end
  
@@ -178,12 +186,22 @@ class E2gatherController < ApplicationController
   end
   
   def create_user_event
-    puts "Check object " + self.to_s
-    puts "Test create_user_event"
-
     if session[:user_id].nil?
      puts "No current user"
      loginFacebook
+    end
+
+    if params[:add]
+    	#Insert a new entry for ingredient
+	@emp_ingred = session[:emp_ingred]
+	@emp_q = session[:emp_q]	
+
+	new_emp_ingred = "ingredient" + @emp_ingred.length.to_s
+	new_emp_q = "q" + @emp_ingred.length.to_s
+	@emp_ingred << new_emp_ingred
+	@emp_q << new_emp_q
+	render "e2gather/new_user_event"
+	return 
     end
     
     @current_user = User.find(session[:user_id])
@@ -220,6 +238,8 @@ class E2gatherController < ApplicationController
     puts "Check event id: " + @event.event_id.to_s()
      
     if @event.save
+      session[:emp_ingred] = nil
+      session[:emp_q] = nil
       redirect_to '/e2gather/loginFacebook'
     else
       errorpage 'Problem saving event. Please fill all fields with appropriate inputs'
@@ -282,6 +302,8 @@ class E2gatherController < ApplicationController
 
   def errorpage(error_message)
     flash[:error] = error_message
+    session[:emp_ingred] = nil
+    session[:emp_q] = nil
     render 'e2gather/error_page'
   end
 			
