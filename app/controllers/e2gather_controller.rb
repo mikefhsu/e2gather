@@ -142,10 +142,15 @@ class E2gatherController < ApplicationController
     #Default 3 ingredients
     @emp_ingred = Array.new
     @emp_q = Array.new
+	@ing = Array.new
+	@qua = Array.new
     for i in 0..2
 	@emp_ingred << "ingredient" + i.to_s
 	@emp_q << "q" + i.to_s
+	@ing<<""
+	@qua<<""
     end
+	@event_time = Time.now
     puts "Check emp_ingred " + @emp_ingred.to_s
     render "e2gather/new_user_event"
   end
@@ -185,6 +190,11 @@ class E2gatherController < ApplicationController
     #redirect_to "/e2gather/loginFacebook"
   end
   
+  def is_number(n)
+    begin Float(n) ; true end rescue false
+  end
+
+ 
   def create_user_event
     if session[:user_id].nil?
      puts "No current user"
@@ -193,13 +203,32 @@ class E2gatherController < ApplicationController
 
     if params[:add]
     	#Insert a new entry for ingredient
+	
+	
 	@emp_ingred = session[:emp_ingred]
 	@emp_q = session[:emp_q]	
+	@ing = session[:ing]
+	@qua = session[:qua]	
+	
+	for i in 0..@emp_ingred.length-1
+	@ing[i] = params[@emp_ingred[i]]
+    @qua[i] =  params[@emp_q[i]]
+	end
+	
+	@event_name = params[:name]
+	@event_location = params[:location]
+	date_hash1 = params[:date_time]
+	@event_time = Time.new(date_hash1["(1i)"].to_i, date_hash1["(2i)"].to_i, date_hash1["(3i)"].to_i, date_hash1["(4i)"].to_i, date_hash1["(5i)"].to_i,"+0000")
+	puts @event_time
 
+	
 	new_emp_ingred = "ingredient" + @emp_ingred.length.to_s
 	new_emp_q = "q" + @emp_ingred.length.to_s
 	@emp_ingred << new_emp_ingred
 	@emp_q << new_emp_q
+	@ing <<""
+	@qua <<""
+	
 	render "e2gather/new_user_event"
 	return 
     end
@@ -219,12 +248,23 @@ class E2gatherController < ApplicationController
     date_hash = params[:date_time]
     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
     @event.date_time = date
-
+    
+	@emp_ingred = session[:emp_ingred]
+	@emp_q = session[:emp_q]	
+	@ing = session[:ing]
+	@qua = session[:qua]	
+	 
+	ingredient_list =[]
+	for i in 0..@emp_ingred.length-1
+	if ((params[@emp_ingred[i]]!="")&& (params[@emp_q[i]]!="")&&(is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0))
+	ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
+    end 
+	end
     # Collect ingredient and guest
-    ingredient_list =[]
-    ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
-    ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
-    ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
+    
+  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
+  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
+  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
     #ingredient_list << Ingredient.new( :name=>  params[:ingredient4], :ingredient_id =>0, :quantity=> params[:q4],  :unit=>0, :user_id=> 0)
 
 
@@ -307,6 +347,12 @@ class E2gatherController < ApplicationController
     render 'e2gather/error_page'
   end
 			
+    def errorpagenotfound
+    flash[:error] = 'Page Not Found!'
+    session[:emp_ingred] = nil
+    session[:emp_q] = nil
+    render 'e2gather/error_page'
+  end
   def getFriendList
     friend_e2gather = Array.new
     @friends.each do |f|

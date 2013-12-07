@@ -6,17 +6,18 @@
 
       <b>Name</b>
       <br> 
-      <%= text_field_tag(:name) %>
+      <%= text_field_tag(:name,@event_name|| "") %>
       <br> 
       <br>
       <b>Location</b>
       <br> 
-      <%= text_field_tag(:location) %>
+      <%= text_field_tag(:location,@event_location || "") %>
       <br>
       <br>
       <b>Date and Time</b>
       <br> 
-      <%= datetime_select(:date_time, "", :default => Time.now , :discard_second => true) %>
+	  
+      <%= datetime_select(:date_time, "", :default => @event_time , :discard_second => true) %>
       <%= hidden_field :status, :value => "Pending" %>
       <br>
       <br>
@@ -26,9 +27,9 @@
 	<% for i in 0..@emp_ingred.length-1%>
         <tr>
 		<td><%= label_tag("Ingredients") %></td>
-		<td><%= text_field_tag(@emp_ingred[i])%></td>
+		<td><%= text_field_tag(@emp_ingred[i], @ing[i] || "")%></td>
 		<td><%= label_tag("Quantity") %></td>
-		<td><%= text_field_tag(@emp_q[i])%></td>
+		<td><%= text_field_tag(@emp_q[i], @qua[i] || "")%></td>
 	</tr>
 	<% end %>
 	<!--<tr>
@@ -48,6 +49,8 @@
       <br>
       <% session[:emp_ingred] = @emp_ingred%>
       <% session[:emp_q] = @emp_q%>
+	  <% session[:ing] = @ing%>
+      <% session[:qua] = @qua%>
       <%= submit_tag "Add ingredient", :name=>"add"%>
       <%= submit_tag "Create event", :name=>"create"%>
     <% end %>

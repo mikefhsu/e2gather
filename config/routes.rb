@@ -37,13 +37,14 @@ E2gather::Application.routes.draw do
   get 'events/select_guests/:e_id' => 'events#select_guests'
   post 'events/finalized' => "events#finalized"
   post 'users/update_invitation' => 'users#update_invitation'
-  get 'e2gather/errorpage' => 'e2gather#errorpage'
+  get 'e2gather/errorpage' => 'e2gather#errorpagenotfound'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
   get 'e2gather/render_ingredient_page' => 'e2gather#render_ingredient_page'
   post 'e2gather/create_ingredient' => 'e2gather#create_ingredient'
-
+  get ':not_found'=> 'e2gather#errorpagenotfound'
+  post ':not_found' => 'e2gather#errorpagenotfound'
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
