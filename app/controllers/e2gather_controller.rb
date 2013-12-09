@@ -211,7 +211,7 @@ class E2gatherController < ApplicationController
 	@qua = session[:qua]	
 	
 	for i in 0..@emp_ingred.length-1
-	@ing[i] = params[@emp_ingred[i]]
+	  @ing[i] = params[@emp_ingred[i]]
     @qua[i] =  params[@emp_q[i]]
 	end
 	
@@ -237,8 +237,21 @@ class E2gatherController < ApplicationController
     puts "Current user " + @current_user.name
     @event = Event.new
     @event.host = @current_user.name
-    @event.name = params[:name]
-    @event.location = params[:location]
+
+    if params[:name].length <=255
+      @event.name = params[:name]
+    else
+      errorpage 'Name for event is too long,should be less than 255'
+      return
+    end
+
+    if params[:location].length <= 255
+      @event.location = params[:location]
+    else
+      errorpage 'Location for event is too long,should be less than 255'
+      return
+    end
+
     @event.event_id = Time.now.to_i 
     # Status: Pending, Confirmed, Cancelled
     @event.status = "Pending"
@@ -256,9 +269,17 @@ class E2gatherController < ApplicationController
 	 
 	ingredient_list =[]
 	for i in 0..@emp_ingred.length-1
-	if ((params[@emp_ingred[i]]!="")&& (params[@emp_q[i]]!="")&&(is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0))
-	ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
-    end 
+	  if ((is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0)&&( params[@emp_q[i]].to_i <= 10000))
+	  ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
+    else
+    session[:emp_ingred] = nil
+    session[:emp_q] = nil 
+    session[:ing] = nil
+    session[:qua] = nil
+    errorpage "Invalid input in events"
+    return
+    end
+   
 	end
     # Collect ingredient and guest
     
@@ -303,6 +324,11 @@ class E2gatherController < ApplicationController
     @ingredient.quantity = params[:quantity]
     @ingredient.unit = params[:unit]
     @ingredient.ingredient_id =  Time.now.to_i
+    
+    if params[:quantity].to_i <=0 || params[:quantity].to_i > 10000
+      errorpage 'Quantity is invalid'
+      return
+    end
 
     if @ingredient.save
       redirect_to "/e2gather/loginFacebook"
@@ -321,10 +347,14 @@ class E2gatherController < ApplicationController
   
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
-    
-    if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))
-	    render "e2gather/show_ingredient"
-    else 
+    if (params[:quantity].to_i > 10000 || params[:quantity].to_i <= 0)
+      errorpage 'Invalid quantity'
+      return
+    end
+
+    if @ingredient.update_attributes(params.require(:ingredient).permit(:name, :quantity, :unit))    
+      render "e2gather/show_ingredient"
+    else  
       respond_to do |format|       
         format.html { render action: 'edit_ingredient' }
         format.json { render json: @ingredient.errors, status: :unprocessable_entity }

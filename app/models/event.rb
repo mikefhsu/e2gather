@@ -3,6 +3,7 @@ class Event < ActiveRecord::Base
   belongs_to :user, foreign_key: "host"
   has_many :ingredients
   validates_presence_of :name
+  validates_presence_of :location
 
   @@accept_msg = " has accepted your invitation for "
   @@reject_msg = " has rejected your invitation for "
