@@ -17,7 +17,7 @@
       <b>Date and Time</b>
       <br> 
 	  
-      <%= datetime_select(:date_time, "", :default => @event_time , :discard_second => true) %>
+      <%= datetime_select(:date_time, "", :default => @event_time , :discard_second => true, start_year: 2013) %>
       <%= hidden_field :status, :value => "Pending" %>
       <br>
       <br>

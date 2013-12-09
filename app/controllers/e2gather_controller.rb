@@ -240,6 +240,7 @@ class E2gatherController < ApplicationController
     @event = Event.new
     @event.host = @current_user.name
 
+    #check event's name and location length
     if params[:name].length <=255
       @event.name = params[:name]
     else
@@ -261,13 +262,47 @@ class E2gatherController < ApplicationController
     # Set date and time
     puts "Show params: " + params.to_s()
     date_hash = params[:date_time]
+    
+    #check valid number of dates in month
+    if(date_hash["(1i)"].to_i % 4 == 0) && (date_hash["(2i)"].to_i == 2)&& (date_hash["(3i)"].to_i > 29)
+      errorpage 'Not a valid date'
+      return
+    end
+    if(date_hash["(1i)"].to_i % 4 != 0) && (date_hash["(2i)"].to_i == 2)&& (date_hash["(3i)"].to_i > 28)
+      errorpage 'Not a valid date'
+      return
+    end
+
+    month_30days = Array.new
+    month_30days = [4,6,9,11]
+
+    month_31days = Array.new
+    month_31days = [1,3,5,7,8,10,12]
+
+    for i in 0..month_30days.length-1
+      if (date_hash["(2i)"].to_i == month_30days[i]) && (date_hash["(3i)"].to_i > 30)
+        errorpage 'Not a valid date'
+        return
+      end
+    end
+
+    for i in 0..month_31days.length-1
+      if (date_hash["(2i)"].to_i == month_31days[i]) && (date_hash["(3i)"].to_i > 31)
+        errorpage 'Not a valid date'
+        return
+      end
+    end
+
     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
     @event.date_time = date
 
+    #check date and time is not passed
     if Time.now.to_i > @event.date_time.to_i
       errorpage 'Event time has passed'
       return
     end
+
+
     
 	@emp_ingred = session[:emp_ingred]
 	@emp_q = session[:emp_q]	
@@ -275,6 +310,7 @@ class E2gatherController < ApplicationController
 	@qua = session[:qua]	
 	 
 	ingredient_list =[]
+  # check if ingredient quantity is valid
 	for i in 0..@emp_ingred.length-1
 	  if ((is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0)&&( params[@emp_q[i]].to_i <= 10000))
 	  ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
@@ -332,6 +368,7 @@ class E2gatherController < ApplicationController
     @ingredient.unit = params[:unit]
     @ingredient.ingredient_id =  Time.now.to_i
     
+    #check valid quantity for ingredient
     if params[:quantity].to_i <=0 || params[:quantity].to_i > 10000
       errorpage 'Quantity is invalid'
       return
@@ -354,6 +391,8 @@ class E2gatherController < ApplicationController
   
   def update_ingredient
     @ingredient = Ingredient.find(params[:id])
+
+    #check valid quantity for ingredient
     if (params[:quantity].to_i > 10000 || params[:quantity].to_i <= 0)
       errorpage 'Invalid quantity'
       return
