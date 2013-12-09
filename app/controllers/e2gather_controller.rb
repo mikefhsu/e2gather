@@ -221,6 +221,8 @@ class E2gatherController < ApplicationController
 	@event_time = Time.new(date_hash1["(1i)"].to_i, date_hash1["(2i)"].to_i, date_hash1["(3i)"].to_i, date_hash1["(4i)"].to_i, date_hash1["(5i)"].to_i,"+0000")
 	puts @event_time
 
+  
+
 	
 	new_emp_ingred = "ingredient" + @emp_ingred.length.to_s
 	new_emp_q = "q" + @emp_ingred.length.to_s
@@ -261,6 +263,11 @@ class E2gatherController < ApplicationController
     date_hash = params[:date_time]
     date = DateTime.new(date_hash["(1i)"].to_i, date_hash["(2i)"].to_i, date_hash["(3i)"].to_i, date_hash["(4i)"].to_i, date_hash["(5i)"].to_i)
     @event.date_time = date
+
+    if Time.now.to_i > @event.date_time.to_i
+      errorpage 'Event time has passed'
+      return
+    end
     
 	@emp_ingred = session[:emp_ingred]
 	@emp_q = session[:emp_q]	
@@ -276,7 +283,7 @@ class E2gatherController < ApplicationController
     session[:emp_q] = nil 
     session[:ing] = nil
     session[:qua] = nil
-    errorpage "Invalid input in events"
+    errorpage "Invalid input in ingredients"
     return
     end
    
