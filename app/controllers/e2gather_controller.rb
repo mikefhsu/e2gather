@@ -139,18 +139,19 @@ class E2gatherController < ApplicationController
   end
 
   def render_event_page
-    #Default 3 ingredients
+    #Default 1 ingredients
     @emp_ingred = Array.new
     @emp_q = Array.new
 	@ing = Array.new
 	@qua = Array.new
-    for i in 0..2
+    for i in 0..0
 	@emp_ingred << "ingredient" + i.to_s
 	@emp_q << "q" + i.to_s
 	@ing<<""
 	@qua<<""
     end
-	@event_time = Time.now
+	cur_time = Time.now
+        @event_time = Time.new(cur_time.year, cur_time.month, cur_time.day + 1, 17, 0, 0);  
     puts "Check emp_ingred " + @emp_ingred.to_s
     render "e2gather/new_user_event"
   end
@@ -161,7 +162,9 @@ class E2gatherController < ApplicationController
 	
     @total_ingred_list = Hash.new
     @event_ingredient.each {|tmp|
-      user_ingred = Ingredient.select("user_id").where("name = ? AND quantity > ?", tmp.name, tmp.quantity)
+      user_ingred = Ingredient.select("user_id").where("name = ? AND quantity >= ?", tmp.name, tmp.quantity)
+      puts 'pick_guests: ' + tmp.name
+      puts 'pick_guests_ingred: ' + user_ingred.name
       guest_list = [] 
       if !user_ingred.any?()
         guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
@@ -181,6 +184,10 @@ class E2gatherController < ApplicationController
               puts "f=" + f["id"] + "   i=" + i["user_id"] + " -> NO MATCH"
             end
           }
+          
+            if guest_list.length == 0
+		guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
+            end
         end
         @total_ingred_list[tmp.name] = guest_list
         puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
