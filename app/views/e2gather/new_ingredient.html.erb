@@ -13,7 +13,9 @@
     <%= text_field_tag(:quantity) %>
     <br>
     <%= label_tag(:unit, "Unit") %>
-    <%= text_field_tag(:unit) %>
+    <%= select('', :unit, ['Unit(s)', 'Teaspoon(s)', 'Tablespoon(s)', 'Fluid Ounce(s)', 
+	'Cup(s)', 'Pint(s)', 'Quart(s)', 'Gallon(s)', 'Pound(s)', 'Ounce(s)'], {}, 
+	{ index: nil }) %>
     <br>
     <%= submit_tag "Submit" %>
 
