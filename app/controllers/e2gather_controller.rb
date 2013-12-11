@@ -14,6 +14,7 @@ class E2gatherController < ApplicationController
     session[:oauth] = nil
     session[:access_token] = nil
     session[:user_id] = nil
+    session[:friend_list]=nil
     render :text => "You've logged out!"
   end
   
