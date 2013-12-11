@@ -75,10 +75,8 @@ class E2gatherController < ApplicationController
       return
     end
     
-    @user_name = User.find(session[:user_id]).name
     all_list = Event.find_by_sql("SELECT * FROM events ORDER By events.date_time")
-    @event_list = all_list.select{|tmp| tmp.host == @user_name || tmp.guest_list.split(",").include?(@user_name)}
-    #@host_id = User.find(@event_list[1].)
+    @event_list = all_list.select{|tmp| tmp.host == @current_user.id || tmp.guest_list.split(",").include?(@current_user.id)}
     if @event_list.nil?
       @event_list = Array.new
     end
@@ -129,7 +127,7 @@ class E2gatherController < ApplicationController
 	#puts "ingre name:" +tmp.name
 	#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
   
-	      UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
+	    UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
           tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
       }
       redirect_to "/e2gather/loginFacebook"
@@ -245,7 +243,7 @@ class E2gatherController < ApplicationController
     @current_user = User.find(session[:user_id])
     puts "Current user " + @current_user.name
     @event = Event.new
-    @event.host = @current_user.name
+    @event.host = @current_user.id
 
     #check event's name and location length
     if params[:name].length <=255
