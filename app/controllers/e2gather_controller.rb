@@ -104,38 +104,28 @@ class E2gatherController < ApplicationController
        return
      end
      guest_list = guest_list + User.find(params[tmp.name]).name + ","
-	 tmp.user_id = params[tmp.name]
-	 puts "tmp.id:" + tmp.name
-	 #tmp.quantity = params[tmp.quantity]
-    puts "tmp.quantity:" + tmp.quantity.to_s()
-	  # puts temp.to_s()
-	 #user_list << User.find(params[tmp.name]) 
+     tmp.user_id = params[tmp.name]
+     puts "tmp.id:" + tmp.name
+     #tmp.quantity = params[tmp.quantity]
+     puts "tmp.quantity:" + tmp.quantity.to_s()
    }
    guest_list = guest_list[0...-1]
    @current_event.guest_list = guest_list
  
    @current_event.ingredient_list = @event_ingredient
-   # puts @current_event.guest_list   +"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
 
    @current_event.unconfirmed = guest_list
 
  
-    if @current_event.save
-	    @event_ingredient.each {|tmp|
-	#puts "user name:" +User.find(session[:user_id]).name
-	#puts "invitee email:" +User.find(tmp.user_id).email
-	#puts "invitee name:" +User.find(tmp.user_id).name
-	#puts "ingre quantity:" + tmp.quantity
-	#puts "ingre name:" +tmp.name
-	#puts "Im goingto sendethe email!!!mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
-  
-	      UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
-          tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
-      }
-      redirect_to "/e2gather/loginFacebook"
-    else
+   if @current_event.save
+     @event_ingredient.each {|tmp| 
+       UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
+       tmp.quantity.to_s(), tmp.name,@current_event.name).deliver
+     }
+     redirect_to "/e2gather/loginFacebook"
+   else
      render "e2gather/error_page"
-    end
+   end
   end
 
   def render_event_page
@@ -185,12 +175,11 @@ class E2gatherController < ApplicationController
             end
           }
           
-            if guest_list.length == 0
-		guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
-            end
+          if guest_list.length == 0
+            guest_list<<[ User.find(session[:user_id]).name , session[:user_id]]
+          end
         end
         @total_ingred_list[tmp.name] = guest_list
-        puts tmp.name + "mmmmmmmmmmmmmmmmmmmmmmmm" + guest_list.to_s()
       }
       end	  
     }
@@ -201,11 +190,10 @@ class E2gatherController < ApplicationController
     begin Float(n) ; true end rescue false
   end
 
- 
   def create_user_event
     if session[:user_id].nil?
-     puts "No current user"
-     loginFacebook
+      puts "No current user"
+      loginFacebook
     end
 
     if params[:add]
@@ -219,7 +207,7 @@ class E2gatherController < ApplicationController
 	
 	for i in 0..@emp_ingred.length-1
 	  @ing[i] = params[@emp_ingred[i]]
-    @qua[i] =  params[@emp_q[i]]
+          @qua[i] =  params[@emp_q[i]]
 	end
 	
 	@event_name = params[:name]
@@ -228,9 +216,6 @@ class E2gatherController < ApplicationController
 	@event_time = Time.new(date_hash1["(1i)"].to_i, date_hash1["(2i)"].to_i, date_hash1["(3i)"].to_i, date_hash1["(4i)"].to_i, date_hash1["(5i)"].to_i,"+0000")
 	puts @event_time
 
-  
-
-	
 	new_emp_ingred = "ingredient" + @emp_ingred.length.to_s
 	new_emp_q = "q" + @emp_ingred.length.to_s
 	@emp_ingred << new_emp_ingred
@@ -308,37 +293,26 @@ class E2gatherController < ApplicationController
       errorpage 'Event time has passed'
       return
     end
-
-
     
-	@emp_ingred = session[:emp_ingred]
-	@emp_q = session[:emp_q]	
-	@ing = session[:ing]
-	@qua = session[:qua]	
+    @emp_ingred = session[:emp_ingred]
+    @emp_q = session[:emp_q]	
+    @ing = session[:ing]
+    @qua = session[:qua]	
 	 
-	ingredient_list =[]
-  # check if ingredient quantity is valid
-	for i in 0..@emp_ingred.length-1
-	  if ((is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0)&&( params[@emp_q[i]].to_i <= 10000))
-	  ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
-    else
-    session[:emp_ingred] = nil
-    session[:emp_q] = nil 
-    session[:ing] = nil
-    session[:qua] = nil
-    errorpage "Invalid input in ingredients"
-    return
+    ingredient_list =[]
+    # check if ingredient quantity is valid
+    for i in 0..@emp_ingred.length-1
+      if ((is_number(params[@emp_q[i]]) )&&( params[@emp_q[i]].to_i > 0)&&( params[@emp_q[i]].to_i <= 10000))
+        ingredient_list << Ingredient.new( :name=> params[@emp_ingred[i]], :ingredient_id =>0, :quantity=>params[@emp_q[i]],  :unit=>0, :user_id=> 0)
+      else
+        session[:emp_ingred] = nil
+        session[:emp_q] = nil 
+        session[:ing] = nil
+        session[:qua] = nil
+        errorpage "Invalid input in ingredients"
+        return
+      end
     end
-   
-	end
-    # Collect ingredient and guest
-    
-  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient1], :ingredient_id =>0, :quantity=> params[:q1],  :unit=>0, :user_id=> 0)
-  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient2], :ingredient_id =>0, :quantity=> params[:q2],  :unit=>0, :user_id=> 0)
-  #  ingredient_list << Ingredient.new( :name=>  params[:ingredient3], :ingredient_id =>0, :quantity=> params[:q3],  :unit=>0, :user_id=> 0)
-    #ingredient_list << Ingredient.new( :name=>  params[:ingredient4], :ingredient_id =>0, :quantity=> params[:q4],  :unit=>0, :user_id=> 0)
-
-
     # Add ingredient and guest to database
     @event.ingredient_list = ingredient_list
     @event.guest_list = ""
