@@ -14,6 +14,7 @@ class E2gatherController < ApplicationController
     session[:oauth] = nil
     session[:access_token] = nil
     session[:user_id] = nil
+    session[:friend_list]=nil
     render :text => "You've logged out!"
   end
   
@@ -75,10 +76,8 @@ class E2gatherController < ApplicationController
       return
     end
     
-    @user_name = User.find(session[:user_id]).name
     all_list = Event.find_by_sql("SELECT * FROM events ORDER By events.date_time")
-    @event_list = all_list.select{|tmp| tmp.host == @user_name || tmp.guest_list.split(",").include?(@user_name)}
-    #@host_id = User.find(@event_list[1].)
+    @event_list = all_list.select{|tmp| tmp.host == @current_user.id || tmp.guest_list.split(",").include?(@current_user.id)}
     if @event_list.nil?
       @event_list = Array.new
     end
@@ -116,7 +115,6 @@ class E2gatherController < ApplicationController
 
    @current_event.unconfirmed = guest_list
 
- 
    if @current_event.save
      @event_ingredient.each {|tmp| 
        UserMailer.invite_email(User.find(session[:user_id]).name ,User.find(tmp.user_id).email,User.find(tmp.user_id).name, 
@@ -230,7 +228,7 @@ class E2gatherController < ApplicationController
     @current_user = User.find(session[:user_id])
     puts "Current user " + @current_user.name
     @event = Event.new
-    @event.host = @current_user.name
+    @event.host = @current_user.id
 
     #check event's name and location length
     if params[:name].length <=255
@@ -404,12 +402,13 @@ class E2gatherController < ApplicationController
     render 'e2gather/error_page'
   end
 			
-    def errorpagenotfound
+  def errorpagenotfound
     flash[:error] = 'Page Not Found!'
     session[:emp_ingred] = nil
     session[:emp_q] = nil
     render 'e2gather/error_page'
   end
+  
   def getFriendList
     friend_e2gather = Array.new
     @friends.each do |f|
